@@ -1,0 +1,7 @@
+##kube
+alias l='ls -lah'
+alias dps='docker ps --format "table {{.ID}}\t{{.Status}}\t{{.Image}}" | grep -v pause'
+alias stl='systemctl'
+alias jtl='journalctl --follow -u'
+alias kd='/kube/do'
+shopt -s autocd

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Provisioning deploys, configures and activates role-specific Kube components:
+# * Controllers: etcd, kube-apiserver, kube-controller-manager, kube-scheduler.
+# * Workers: docker, kubelet and kube-proxy
+#
+# The binaries are prepared in the "pre-" phase.

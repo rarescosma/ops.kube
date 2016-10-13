@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# The "pre-" phase generates assets for cluster orchestration and later provisioning:
+# * Generates a suitable LXC base image and profile
+# * Downloads and synchronizes required binaries (kubectl, kubelet, etcd, etc.)
+# * Generates TLS credentials

@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Contains namespaced functions for all stages
+
+export DOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $DOT/env.sh
+source $DOT/lib/utils.sh
+source $DOT/lib/bin.sh
+source $DOT/lib/lxc.sh
+source $DOT/lib/clean.sh
+source $DOT/lib/prepare.sh
+source $DOT/lib/orchestrate.sh
+source $DOT/lib/provision.sh
+source $DOT/lib/post.sh
+
+TPL=$DOT/templates
+
+clean() {
+  # clean::binaries
+  # clean::lxc_artefacts
+  clean::tls
+  clean::lxc_containers
+  post::route_clean
+}
+
+prepare() {
+  prepare::bin
+  prepare::tls
+  prepare::lxc
+}
+
+orchestrate() {
+  orchestrate::masters
+
+  post::configure_kc
+  for x in `seq 1 12`; do kubectl create -f $DOT/../addons/docker-registry/docker-registry-daemonset.yaml && break || sleep 1; done
+
+  orchestrate::worker 0
+  orchestrate::worker 1
+}
+
+post() {
+  post::configure_kc
+  post::route
+}
+
+post::route() {
+  post::route_clean
+  post::route_add
+}
+
+everything() {
+  prepare
+  orchestrate
+  post
+}
+
+# Verbatim, yeah!
+$@

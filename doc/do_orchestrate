@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Orchestration manages the lifecycle of LXC VMs hosting
+# the Kubernetes cluster:
+# * Create LXC containers for the control and data planes
+# * Handles host-based routing (which acts as a MLS)
+# * Destroy the control plane or individual workers

@@ -1,0 +1,5 @@
+/core
+/share/.*
+/share/bin/
+/share/env.sh
+

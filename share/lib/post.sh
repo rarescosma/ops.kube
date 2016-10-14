@@ -30,7 +30,7 @@ post::route_add() {
   local docker_subnet
 
   # Find all worker IPs
-  for worker_ip in $(lxc list -c 4 worker | grep eth0 | cut -d" " -f2); do
+  for worker_ip in $(vm::discover_workers); do
     docker_subnet=$(utils::docker_subnet $worker_ip)
     sudo route del -net $docker_subnet &>/dev/null
     sudo route add -net $docker_subnet gw $worker_ip

@@ -57,9 +57,8 @@ utils::wait_ip() {
   done
 }
 
-utils::require_vm() {
-  [[ "lxc" == $(printenv container) ]] || \
-    (echo "Error: not an LXC container" && exit 1)
+utils::export_vm() {
+  vm::assert_vm
 
   export HOSTNAME=$(hostname)
   export MY_IP=$(utils::wait_ip)

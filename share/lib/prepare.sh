@@ -32,8 +32,3 @@ prepare::tls() {
     $TPL/tls_kube-csr.json | cfssljson -bare kubernetes
   popd
 }
-
-prepare::lxc() {
-  lxc::update_profile
-  lxc image show $LXC_IMG 2>/dev/null || lxc::create_base_image $LXC_IMG
-}

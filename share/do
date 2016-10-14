@@ -7,7 +7,9 @@ export TPL=$DOT/templates
 source $DOT/env.sh
 source $DOT/lib/utils.sh
 source $DOT/lib/bin.sh
-source $DOT/lib/lxc.sh
+
+source $DOT/lib/vm.lxc.sh # wop wop abstraction baby
+
 source $DOT/lib/clean.sh
 source $DOT/lib/prepare.sh
 source $DOT/lib/orchestrate.sh
@@ -17,10 +19,12 @@ source $DOT/lib/deploy.sh
 
 
 clean() {
+  cluster::down
   clean::binaries
-  clean::lxc_artefacts
   clean::tls
-  clean::lxc_containers
+  vm::clean_artefacts
+}
+
 cluster::down() {
   vm::delete_containers
   post::route_clean
@@ -30,10 +34,11 @@ cluster::up() {
   orchestrate
   post
 }
+
 prepare() {
   prepare::bin
   prepare::tls
-  prepare::lxc
+  vm::prepare
 }
 
 orchestrate() {

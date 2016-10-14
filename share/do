@@ -16,8 +16,8 @@ source $DOT/lib/post.sh
 TPL=$DOT/templates
 
 clean() {
-  # clean::binaries
-  # clean::lxc_artefacts
+  clean::binaries
+  clean::lxc_artefacts
   clean::tls
   clean::lxc_containers
   post::route_clean

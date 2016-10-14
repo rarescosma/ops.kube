@@ -22,7 +22,7 @@ metadata:
     version: v19
     kubernetes.io/cluster-service: "true"
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       k8s-app: kube-dns

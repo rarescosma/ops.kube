@@ -1,7 +1,7 @@
 #!/bin/bash
 
 provision::master() {
-  utils::require_vm
+  utils::export_vm
   provision::base
 
   utils::template $TPL/auth_token.csv > /kube/etc/auth/token.csv
@@ -11,7 +11,7 @@ provision::master() {
 }
 
 provision::worker() {
-  utils::require_vm
+  utils::export_vm
   provision::base
 
   export POD_CIDR=$(utils::docker_subnet $MY_IP)
@@ -23,7 +23,7 @@ provision::worker() {
 }
 
 provision::base() {
-  utils::require_vm
+  utils::export_vm
 
   # Check connectivity - DANGER!
   while ! ping -c1 www.google.com &>/dev/null; do :; done

@@ -7,25 +7,29 @@ SCRIPTPATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 ADDONS_ROOT="${SCRIPTPATH}/../addons"
 APPS_ROOT="${SCRIPTPATH}/../apps"
 DOCKER_REGISTRY="localhost:5000"
-source $SCRIPTPATH/../share/lib/deploy.sh
+source $SCRIPTPATH/../share/do -lib
 
-addons::dns() {
+addon::dns() {
   deploy::addon dns/kubedns-deployment.yaml
   deploy::addon dns/kubedns-service.yaml
 }
 
-addons::dashboard() {
+addon::dashboard() {
   deploy::addon dashboard/dashboard-controller.yaml
   deploy::addon dashboard/dashboard-service.yaml
 }
 
 addons() {
-  addons::dns
-  addons::dashboard
+  addon::dns
+  addon::dashboard
 }
 
-apps::guestbook() {
+app::guestbook() {
   deploy::app guestbook/all-in-one/guestbook-all-in-one.yaml
+}
+
+apps() {
+  app::guestbook
 }
 
 upgrade::frontend() {

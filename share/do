@@ -56,4 +56,6 @@ everything() {
 }
 
 # Verbatim, yeah!
-$@
+if [[ "-lib" != "$1" ]]; then
+  $@
+fi

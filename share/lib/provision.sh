@@ -35,7 +35,7 @@ provision::base() {
 
   # Profile / aliases / etc.
   local rc="/root/.bashrc"
-  grep -q -F '##kube' $rc || cat $DOT/templates/lxc_bashrc >> $rc
+  grep -q -F '##kube' $rc || cat $DOT/templates/bashrc >> $rc
 
   # Link binaries
   ln -sf /kube/bin/* /usr/bin/

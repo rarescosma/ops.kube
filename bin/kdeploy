@@ -1,0 +1,50 @@
+#!/bin/bash
+
+set -o nounset
+set -o pipefail
+
+SCRIPTPATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+ADDONS_ROOT="${SCRIPTPATH}/../addons"
+APPS_ROOT="${SCRIPTPATH}/../apps"
+DOCKER_REGISTRY="localhost:5000"
+source $SCRIPTPATH/../share/lib/deploy.sh
+
+addons::dns() {
+  deploy::addon dns/kubedns-deployment.yaml
+  deploy::addon dns/kubedns-service.yaml
+}
+
+addons::dashboard() {
+  deploy::addon dashboard/dashboard-controller.yaml
+  deploy::addon dashboard/dashboard-service.yaml
+}
+
+addons() {
+  addons::dns
+  addons::dashboard
+}
+
+apps::guestbook() {
+  deploy::app guestbook/all-in-one/guestbook-all-in-one.yaml
+}
+
+upgrade::frontend() {
+  local version=$1
+  kubectl set image deployment/frontend \
+    "php-redis=${DOCKER_REGISTRY}/guestbook/frontend:${version}"
+}
+
+upgrade::redis() {
+  local version=$1
+  kubectl set image deployment/redis-slave \
+    "slave=${DOCKER_REGISTRY}/redis-slave:${version}"
+}
+
+upgrade::guestbook() {
+  local version=$1
+  upgrade::frontend $version
+  upgrade::redis $version
+}
+
+# Verbatim
+$@

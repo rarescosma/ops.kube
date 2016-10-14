@@ -2,4 +2,5 @@
 /share/.*
 /share/bin/
 /share/env.sh
+/share/etc/*
 

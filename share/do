@@ -13,6 +13,7 @@ source $DOT/lib/prepare.sh
 source $DOT/lib/orchestrate.sh
 source $DOT/lib/provision.sh
 source $DOT/lib/post.sh
+source $DOT/lib/deploy.sh
 
 
 clean() {
@@ -20,9 +21,15 @@ clean() {
   clean::lxc_artefacts
   clean::tls
   clean::lxc_containers
+cluster::down() {
+  vm::delete_containers
   post::route_clean
 }
 
+cluster::up() {
+  orchestrate
+  post
+}
 prepare() {
   prepare::bin
   prepare::tls

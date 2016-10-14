@@ -5,6 +5,7 @@ provision::master() {
   provision::base
 
   utils::template $TPL/auth_token.csv > /kube/etc/auth/token.csv
+  utils::template $TPL/auth_policy.jsonl > /kube/etc/auth/policy.jsonl
 
   provision::setup_units etcd kube-apiserver kube-controller-manager kube-scheduler
 }

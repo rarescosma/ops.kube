@@ -3,6 +3,7 @@
 # Contains namespaced functions for all stages
 
 export DOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+export TPL=$DOT/templates
 source $DOT/env.sh
 source $DOT/lib/utils.sh
 source $DOT/lib/bin.sh
@@ -13,7 +14,6 @@ source $DOT/lib/orchestrate.sh
 source $DOT/lib/provision.sh
 source $DOT/lib/post.sh
 
-TPL=$DOT/templates
 
 clean() {
   clean::binaries
@@ -33,7 +33,10 @@ orchestrate() {
   orchestrate::masters
 
   post::configure_kc
-  for x in `seq 1 12`; do kubectl create -f $DOT/../addons/docker-registry/docker-registry-daemonset.yaml && break || sleep 1; done
+  for x in $(seq 1 12); do
+    deploy::addon docker-registry/docker-registry-daemonset.yaml && break;
+    sleep 1
+  done
 
   orchestrate::worker 0
   orchestrate::worker 1
@@ -49,10 +52,9 @@ post::route() {
   post::route_add
 }
 
-everything() {
+all() {
   prepare
-  orchestrate
-  post
+  cluster::up
 }
 
 # Verbatim, yeah!

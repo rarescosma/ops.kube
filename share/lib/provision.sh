@@ -14,7 +14,7 @@ provision::worker() {
   utils::export_vm
   provision::base
 
-  export POD_CIDR=$(utils::docker_subnet $MY_IP)
+  export POD_CIDR=$(utils::docker_subnet $VM_IP)
   export POD_BIP=$(echo "${POD_CIDR}" | sed -e "s/0\.0/0\.1/g")
 
   utils::template $TPL/kubelet_kubeconfig > /kube/etc/kubelet/kubeconfig

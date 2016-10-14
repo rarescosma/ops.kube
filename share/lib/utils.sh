@@ -60,8 +60,8 @@ utils::wait_ip() {
 utils::export_vm() {
   vm::assert_vm
 
-  export HOSTNAME=$(hostname)
-  export MY_IP=$(utils::wait_ip)
+  export VM_HOSTNAME=$(hostname)
+  export VM_IP=$(utils::wait_ip)
 }
 
 utils::to_upper() {

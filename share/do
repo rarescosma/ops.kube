@@ -8,7 +8,7 @@ source $DOT/env.sh
 source $DOT/lib/utils.sh
 source $DOT/lib/bin.sh
 
-source $DOT/lib/vm.lxc.sh # wop wop abstraction baby
+source "${DOT}/lib/vm.${VM_ENGINE}.sh"
 
 source $DOT/lib/clean.sh
 source $DOT/lib/prepare.sh
@@ -50,8 +50,9 @@ orchestrate() {
     sleep 1
   done
 
-  orchestrate::worker 0
-  orchestrate::worker 1
+  orchestrate::worker 0 &
+  orchestrate::worker 1 &
+  wait
 }
 
 post() {

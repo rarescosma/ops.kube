@@ -13,7 +13,7 @@ vm::update_profile() {
   fi
 
   echo "Updating ${LXC_PROFILE}"
-  utils::template $TPL/lxc_profile.yaml | lxc profile edit $LXC_PROFILE
+  utils::template "${TPL}/lxc_profile.yaml" | lxc profile edit $LXC_PROFILE
 }
 
 vm::create_base_image() {

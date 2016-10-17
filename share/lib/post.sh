@@ -2,7 +2,7 @@
 
 post::configure_kc() {
   # Source env.sh again to capture the master0 IP
-  source $DOT/env.sh
+  source "${DOT}/env.sh"
 
   kubectl config set-cluster kube-cluster-name \
     --certificate-authority=$DOT/etc/tls/ca.pem \
@@ -19,11 +19,11 @@ post::configure_kc() {
 }
 
 post::route_clean() {
-  for X in $(seq 1 255); do
-    sudo route del -net "172.${X}.0.0/16" &>/dev/null &
+  for subnet in $(seq 1 255); do
+    sudo route del -net "172.${subnet}.0.0/16" &>/dev/null &
   done
-  sudo route del -net $KUBE_SERVICE_CLUSTER_IP_RANGE &>/dev/null &
   wait
+  sudo route del -net $KUBE_SERVICE_CLUSTER_IP_RANGE &>/dev/null
 }
 
 post::route_add() {

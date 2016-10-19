@@ -40,10 +40,11 @@ utils::get_random_string() {
 }
 
 utils::get_ip() {
-  ip addr show dev $NODE_IFACE | \
-    grep -v inet6 | grep inet | \
-    sed 's/^ *//;s/ *$//' | \
-    cut -d" " -f2 | cut -d"/" -f1
+  local interface=${1:-"$VM_IFACE"}
+  ip addr show dev $interface \
+  | grep -v inet6 | grep inet \
+  | cut -d"/" -f1 \
+  | sed 's/[^0-9.]*//g'
 }
 
 utils::wait_ip() {

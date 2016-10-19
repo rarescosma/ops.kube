@@ -9,7 +9,7 @@ orchestrate::master() {
   vm::launch $vm
   ip=$(vm::exec $vm utils::wait_ip)
 
-  utils::replace_line_by_prefix $DOT/env.sh $envvar "=\"${ip}\""
+  utils::replace_line_by_prefix $DOT/cluster.sh $envvar "=\"${ip}\""
 }
 
 orchestrate::masters() {

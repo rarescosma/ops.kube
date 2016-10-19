@@ -7,7 +7,7 @@ provision::master() {
   utils::template $TPL/auth_token.csv > /kube/etc/auth/token.csv
   cp -f $TPL/auth_policy.jsonl /kube/etc/auth/policy.jsonl
 
-  provision::setup_units etcd kube-apiserver kube-controller-manager kube-scheduler
+  provision::setup_units ${MASTER_UNITS}
 }
 
 provision::worker() {
@@ -19,7 +19,7 @@ provision::worker() {
 
   utils::template $TPL/kubelet_kubeconfig > /kube/etc/kubelet/kubeconfig
 
-  provision::setup_units docker kubelet kube-proxy
+  provision::setup_units ${WORKER_UNITS}
 }
 
 provision::base() {
@@ -43,7 +43,7 @@ provision::base() {
 
 provision::setup_units() {
   for unit in "$@"; do
-    utils::template "${TPL}/unit_${unit}" > /etc/systemd/system/$unit.service
+    utils::template "${TPL}/unit_${unit}" > "/etc/systemd/system/${unit}.service"
   done
 
   systemctl daemon-reload

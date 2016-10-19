@@ -1,4 +1,4 @@
-name: ${LXC_PROFILE}
+name: ${LXD_PROFILE}
 config:
   raw.lxc: |
     lxc.aa_profile=unconfined
@@ -9,7 +9,7 @@ config:
 description: LXC profile for Kubernetes VMs
 devices:
   eth0:
-    name: ${NODE_IFACE}
+    name: ${VM_IFACE}
     nictype: bridged
     parent: lxd
     type: nic

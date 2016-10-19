@@ -44,7 +44,7 @@ orchestrate() {
 
   post::configure_kc
   for x in $(seq 1 12); do
-    deploy::addon docker-registry/docker-registry-daemonset.yaml && break;
+    deploy::apply_addon docker-registry/docker-registry-daemonset.yaml && break;
     sleep 1
   done
 

@@ -10,13 +10,13 @@ DOCKER_REGISTRY="localhost:5000"
 source $SCRIPTPATH/../share/do -lib
 
 addon::dns() {
-  deploy::addon dns/kubedns-deployment.yaml
-  deploy::addon dns/kubedns-service.yaml
+  deploy::recreate_addon dns/kubedns-deployment.yaml
+  deploy::recreate_addon dns/kubedns-service.yaml
 }
 
 addon::dashboard() {
-  deploy::addon dashboard/dashboard-controller.yaml
-  deploy::addon dashboard/dashboard-service.yaml
+  deploy::recreate_addon dashboard/dashboard-controller.yaml
+  deploy::recreate_addon dashboard/dashboard-service.yaml
 }
 
 addons() {
@@ -25,7 +25,7 @@ addons() {
 }
 
 app::guestbook() {
-  deploy::app guestbook/all-in-one/guestbook-all-in-one.yaml
+  deploy::recreate_app guestbook/all-in-one/guestbook-all-in-one.yaml
 }
 
 apps() {

@@ -5,6 +5,7 @@
 export DOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 export TPL=$DOT/templates
 source $DOT/env.sh
+source $DOT/cluster.sh
 source $DOT/lib/utils.sh
 
 source "${DOT}/lib/vm.${VM_ENGINE}.sh"

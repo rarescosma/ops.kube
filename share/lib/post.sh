@@ -1,8 +1,8 @@
 #!/bin/bash
 
 post::configure_kc() {
-  # Source env.sh again to capture the master0 IP
-  source "${DOT}/env.sh"
+  # Source cluster.sh again to capture MASTER0_IP
+  source "${DOT}/cluster.sh"
   local kc='kubectl config'
 
   $kc set-cluster kube-cluster-name \

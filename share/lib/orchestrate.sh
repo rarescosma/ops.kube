@@ -10,14 +10,8 @@ orchestrate::master() {
   ip=$(vm::exec $vm utils::wait_ip)
 
   utils::replace_line_by_prefix $DOT/cluster.sh $envvar "=\"${ip}\""
-}
 
-orchestrate::masters() {
-  orchestrate::master 0
-  orchestrate::master 1
-
-  vm::exec master0 provision::master
-  vm::exec master1 provision::master
+  vm::exec $vm provision::master
 }
 
 orchestrate::worker() {

@@ -34,17 +34,16 @@ prepare() {
 }
 
 orchestrate() {
-  orchestrate::masters
+  orchestrate::master 0
 
   post::configure_kc
   for x in $(seq 1 12); do
-    deploy::apply_addon docker-registry/docker-registry-daemonset.yaml && break;
+    deploy::apply_addon docker-registry/docker-registry-daemonset.yaml \
+    && break;
     sleep 1
   done
 
-  orchestrate::worker 0 &
-  orchestrate::worker 1 &
-  wait
+  orchestrate::worker 0
 }
 
 post() {

@@ -10,6 +10,7 @@ source $DOT/lib/utils.sh
 
 source "${DOT}/lib/vm.${VM_ENGINE}.sh"
 
+source $DOT/lib/cluster.sh
 source $DOT/lib/prepare.sh
 source $DOT/lib/orchestrate.sh
 source $DOT/lib/provision.sh
@@ -18,20 +19,11 @@ source $DOT/lib/deploy.sh
 
 
 clean() {
-  cluster::down
-  clean::binaries
-  clean::tls
-  vm::clean_artefacts
-}
+  # Clean prepare stage
+  rm -rf $DOT/bin/*
+  rm -rf $DOT/etc/tls/*
 
-cluster::down() {
-  vm::delete_containers
-  post::route_clean
-}
-
-cluster::up() {
-  orchestrate
-  post
+  cluster::destroy
 }
 
 prepare() {

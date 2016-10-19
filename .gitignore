@@ -4,4 +4,4 @@
 /share/env.sh
 /share/cluster.sh
 /share/etc/*
-
+/addons/cluster-insight

@@ -1,16 +1,16 @@
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
-  name: kube-docker-proxy-v0
+  name: kube-docker-registry
   namespace: kube-system
   labels:
-    k8s-app: kube-docker-proxy
+    k8s-app: kube-docker-registry
     version: v0
 spec:
   template:
     metadata:
       labels:
-        k8s-app: kube-docker-proxy
+        k8s-app: kube-docker-registry
         version: v0
     spec:
       containers:

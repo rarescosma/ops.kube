@@ -2,7 +2,7 @@
 
 provision::master() {
   utils::export_vm
-  provision::base
+  provision::base -skipapt
 
   utils::template $TPL/auth_token.csv > /kube/etc/auth/token.csv
   cp -f $TPL/auth_policy.jsonl /kube/etc/auth/policy.jsonl
@@ -12,7 +12,7 @@ provision::master() {
 
 provision::worker() {
   utils::export_vm
-  provision::base
+  provision::base -skipapt
 
   export POD_CIDR=$(utils::docker_subnet $VM_IP)
   export POD_BIP=$(echo "${POD_CIDR}" | sed -e "s/0\.0/0\.1/g")
@@ -28,10 +28,12 @@ provision::base() {
   # Check connectivity - DANGER!
   while ! ping -c1 www.google.com &>/dev/null; do :; done
 
-  # Update/upgrade + essentials
-  apt update
-  apt -y full-upgrade
-  apt -y install curl wget ncdu htop iptables socat
+  if [[ "$1" != "-skipapt" ]]; then
+    # Update/upgrade + essentials
+    apt update
+    apt -y full-upgrade
+    apt -y install curl wget ncdu htop iptables socat
+  fi
 
   # Profile / aliases / etc.
   local rc="/root/.bashrc"

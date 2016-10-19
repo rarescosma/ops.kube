@@ -35,9 +35,17 @@ vm::launch() {
   (lxc launch $LXD_BASE_IMG $vm --profile $LXD_PROFILE || lxc start $vm) 2>/dev/null
 }
 
-vm::assert_vm() {
-  [[ "lxc" == $(printenv container) ]] || \
-  (echo "Error: not in an LXC container" && exit 1)
+vm::discover() {
+  local tag="$1"
+  local what=${2:-"ids"}
+  case $what in
+  "ips")
+    lxc list -c 4 ${tag} | grep ${VM_IFACE} | cut -d" " -f2
+    ;;
+  *)
+    lxc list -c n ${tag} | grep ${tag} | cut -d" " -f2
+    ;;
+  esac
 }
 
 vm::exec() {
@@ -45,18 +53,17 @@ vm::exec() {
   lxc exec $vm -- /kube/do $@
 }
 
-vm::discover_workers() {
-  lxc list -c 4 worker | grep eth0 | cut -d" " -f2
+vm::destroy() {
+  lxc delete -f "$@"
+}
+
+vm::assert_vm() {
+  [[ "lxc" == $(printenv container) ]] || \
+  (echo "Error: not in an LXC container" && exit 1)
 }
 
 vm::clean() {
-  # Profile and base image
+  # Cleanup profile and base image
   lxc profile delete $LXD_PROFILE
   lxc image delete $LXD_BASE_IMG
-}
-
-vm::cluster_down() {
-  # Delete all containers starting with master or worker
-  lxc delete -f $(lxc list -c n master | grep master | cut -d" " -f2)
-  lxc delete -f $(lxc list -c n worker | grep worker | cut -d" " -f2)
 }

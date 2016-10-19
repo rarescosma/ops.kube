@@ -24,6 +24,7 @@ clean() {
   rm -rf $DOT/etc/tls/*
 
   cluster::destroy
+  utils::function_exists "vm::clean" && vm::clean
 }
 
 prepare() {

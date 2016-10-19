@@ -31,7 +31,7 @@ post::route_add() {
   local docker_subnet
 
   # Find all worker IPs
-  for worker_ip in $(vm::discover_workers); do
+  for worker_ip in $(vm::discover worker ips); do
     docker_subnet=$(utils::docker_subnet $worker_ip)
     sudo route del -net $docker_subnet &>/dev/null
     sudo route add -net $docker_subnet gw $worker_ip

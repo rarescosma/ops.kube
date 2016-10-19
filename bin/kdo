@@ -9,6 +9,28 @@ APPS_ROOT="${SCRIPTPATH}/../apps"
 DOCKER_REGISTRY="localhost:5000"
 source $SCRIPTPATH/../share/do -lib
 
+up() {
+  cluster::up
+  resolvconf::up
+}
+
+down() {
+  resolvconf::down
+  cluster::down
+}
+
+resolvconf::up() {
+  cat << __EOF__ | sudo tee /etc/resolv.conf
+search svc.kubernetes.local
+nameserver 10.32.0.10
+nameserver 10.0.40.129
+__EOF__
+}
+
+resolvconf::down() {
+  sudo resolvconf -u
+}
+
 addon::dns() {
   deploy::recreate_addon dns/kubedns-deployment.yaml
   deploy::recreate_addon dns/kubedns-service.yaml

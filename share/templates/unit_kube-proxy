@@ -3,6 +3,7 @@ Description=Kubernetes Kube Proxy
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
+ExecStartPre=/bin/mount -o remount,ro /sys
 ExecStart=/usr/bin/kube-proxy \
   --master=https://${MASTER0_IP}:6443 \
   --kubeconfig=/kube/etc/kubelet/kubeconfig \

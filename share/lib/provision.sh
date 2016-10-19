@@ -39,9 +39,6 @@ provision::base() {
 
   # Link binaries
   ln -sf /kube/bin/* /usr/bin/
-
-  # Make sure /sys is ro (kube-proxy workaround...)
-  mount -o remount,ro /sys || true
 }
 
 provision::setup_units() {

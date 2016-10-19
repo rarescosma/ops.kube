@@ -3,19 +3,20 @@
 post::configure_kc() {
   # Source env.sh again to capture the master0 IP
   source "${DOT}/env.sh"
+  local kc='kubectl config'
 
-  kubectl config set-cluster kube-cluster-name \
-    --certificate-authority=$DOT/etc/tls/ca.pem \
-    --embed-certs=true \
-    --server=https://${MASTER0_IP}:6443
+  $kc set-cluster kube-cluster-name \
+  --certificate-authority="${DOT}/etc/tls/ca.pem" \
+  --embed-certs=true \
+  --server="https://${MASTER0_IP}:6443"
 
-  kubectl config set-credentials admin --token ${SECRET_TOKEN}
+  $kc set-credentials admin --token "${SECRET_TOKEN}"
 
-  kubectl config set-context default-context \
-    --cluster=kube-cluster-name \
-    --user=admin
+  $kc set-context default-context \
+  --cluster=kube-cluster-name \
+  --user=admin
 
-  kubectl config use-context default-context
+  $kc use-context default-context
 }
 
 post::route_clean() {

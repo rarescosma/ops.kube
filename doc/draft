@@ -1,0 +1,18 @@
+# Addon: Deploys critical cluster add-ons: kubedns + dashboard.
+#
+# Orchestration manages the lifecycle of LXC VMs hosting
+# the Kubernetes cluster:
+# * Create LXC containers for the control and data planes
+# * Handles host-based routing (which acts as a MLS)
+# * Destroy the control plane or individual workers
+#
+# The "pre-" phase generates assets for cluster orchestration and later provisioning:
+# * Generates a suitable LXC base image and profile
+# * Downloads and synchronizes required binaries (kubectl, kubelet, etcd, etc.)
+# * Generates TLS credentials
+#
+# Provisioning deploys, configures and activates role-specific Kube components:
+# * Controllers: etcd, kube-apiserver, kube-controller-manager, kube-scheduler.
+# * Workers: docker, kubelet and kube-proxy
+#
+# The binaries are prepared in the "pre-" phase.

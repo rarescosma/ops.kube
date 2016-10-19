@@ -1,3 +1,0 @@
-#!/bin/bash
-
-# Deploys critical cluster add-ons: kubedns + dashboard.

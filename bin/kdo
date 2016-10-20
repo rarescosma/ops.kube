@@ -12,6 +12,9 @@ source $SCRIPTPATH/../share/do -lib
 up() {
   cluster::up
   resolvconf::up
+
+  sleep 2
+  xmodmap ~/.Xmodmap
 }
 
 down() {

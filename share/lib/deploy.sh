@@ -4,6 +4,10 @@ deploy::apply() {
   kubectl apply -f "$@"
 }
 
+deploy::delete_app() {
+  kubectl delete -f "${APPS_ROOT}/$@" 2>/dev/null
+}
+
 deploy::loop() {
   kubectl delete -f "$@" 2>/dev/null
   kubectl create -f "$@"

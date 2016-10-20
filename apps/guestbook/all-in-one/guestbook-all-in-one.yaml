@@ -16,6 +16,22 @@ spec:
     tier: backend
     role: master
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: guestbook-redis-pv-claim
+  labels:
+    app: guestbook
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      aspect: redis
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -53,6 +69,13 @@ spec:
             memory: 100Mi
         ports:
         - containerPort: 6379
+        volumeMounts:
+        - name: redis-persistent-storage
+          mountPath: /data
+      volumes:
+      - name: redis-persistent-storage
+        persistentVolumeClaim:
+          claimName: guestbook-redis-pv-claim
 ---
 apiVersion: v1
 kind: Service

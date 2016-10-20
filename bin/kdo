@@ -46,31 +46,5 @@ addons() {
   addon::dashboard
 }
 
-app::guestbook() {
-  deploy::recreate_app guestbook/all-in-one/guestbook-all-in-one.yaml
-}
-
-apps() {
-  app::guestbook
-}
-
-upgrade::frontend() {
-  local version=$1
-  kubectl set image deployment/frontend \
-    "php-redis=${DOCKER_REGISTRY}/guestbook/frontend:${version}"
-}
-
-upgrade::redis() {
-  local version=$1
-  kubectl set image deployment/redis-slave \
-    "slave=${DOCKER_REGISTRY}/redis-slave:${version}"
-}
-
-upgrade::guestbook() {
-  local version=$1
-  upgrade::frontend $version
-  upgrade::redis $version
-}
-
 # Verbatim
 $@

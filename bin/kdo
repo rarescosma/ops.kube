@@ -3,7 +3,7 @@
 set -o nounset
 set -o pipefail
 
-SCRIPTPATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+SCRIPTPATH=$( cd -P "$( dirname $(readlink -f "${BASH_SOURCE[0]}") )" && pwd )
 ADDONS_ROOT="${SCRIPTPATH}/../addons"
 APPS_ROOT="${SCRIPTPATH}/../apps"
 DOCKER_REGISTRY="localhost:5000"

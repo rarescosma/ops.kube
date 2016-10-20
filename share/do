@@ -2,7 +2,7 @@
 
 # Contains namespaced functions for all stages
 
-export DOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+export DOT=$( cd -P "$( dirname $(readlink -f "${BASH_SOURCE[0]}") )" && pwd )
 export TPL=$DOT/templates
 source $DOT/env.sh
 source $DOT/cluster.sh

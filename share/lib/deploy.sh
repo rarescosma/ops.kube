@@ -1,11 +1,7 @@
 #!/bin/bash
 
-deploy::apply() {
-  kubectl apply -f "$@"
-}
-
-deploy::delete_app() {
-  kubectl delete -f "${APPS_ROOT}/$@" 2>/dev/null
+deploy::replace() {
+  kubectl replace -f "$@"
 }
 
 deploy::loop() {
@@ -13,22 +9,12 @@ deploy::loop() {
   kubectl create -f "$@"
 }
 
-deploy::apply_addon() {
+deploy::replace_addon() {
   local addon="$1"
-  deploy::apply "${ADDONS_ROOT}/${addon}"
+  deploy::replace "${ADDONS_ROOT}/${addon}"
 }
 
 deploy::recreate_addon() {
   local addon="$1"
   deploy::loop "${ADDONS_ROOT}/${addon}"
-}
-
-deploy::apply_app() {
-  local app="$1"
-  deploy::apply "${APPS_ROOT}/${app}"
-}
-
-deploy::recreate_app() {
-  local app="$1"
-  deploy::loop "${APPS_ROOT}/${app}"
 }

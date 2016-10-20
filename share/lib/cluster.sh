@@ -12,9 +12,21 @@ cluster::up() {
   post
 }
 
+cluster::stop_worker() {
+  vm::assert_vm
+
+  systemctl stop kubelet || systemctl stop kubelet_single
+  docker rm -f $(docker ps -a -q)
+  halt
+}
+
 cluster::down() {
-  for cid in $(vm::discover master) $(vm::discover worker); do
-    vm::exec ${cid} "halt"
+  for mid in $(vm::discover master); do
+    vm::exec ${mid} "halt"
+  done
+
+  for wid in  $(vm::discover worker); do
+    vm::exec ${wid} cluster::stop_worker
   done
 
   post::route_clean

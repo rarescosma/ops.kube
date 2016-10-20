@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# include the deployment library
+DOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+DOCKER_REGISTRY="localhost:5000"
+MANIFEST="${DOT}/all-in-one/guestbook-all-in-one.yaml"
+
+create() {
+  delete &>/dev/null
+  kubectl create -f $MANIFEST
+}
+
+delete() {
+  kubectl delete -f $MANIFEST
+}
+
+upgrade::frontend() {
+  local version=$1
+  kubectl set image deployment/frontend \
+    "php-redis=${DOCKER_REGISTRY}/guestbook/frontend:${version}"
+}
+
+upgrade::redis() {
+  local version=$1
+  kubectl set image deployment/redis-slave \
+    "slave=${DOCKER_REGISTRY}/redis-slave:${version}"
+}
+
+$@

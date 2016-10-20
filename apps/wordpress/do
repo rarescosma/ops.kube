@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# include the deployment library
+DOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+DOCKER_REGISTRY="localhost:5000"
+
+create() {
+  delete &>/dev/null
+  kubectl create -f "${DOT}/wp-volumes.yaml"
+  kubectl create -f "${DOT}/mysql-deployment.yaml"
+  kubectl create -f "${DOT}/wp-deployment.yaml"
+}
+
+delete() {
+  kubectl delete -f "${DOT}/wp-deployment.yaml"
+  kubectl delete -f "${DOT}/mysql-deployment.yaml"
+  kubectl delete -f "${DOT}/wp-volumes.yaml"
+}
+
+$@

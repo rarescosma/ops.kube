@@ -15,7 +15,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-pv-claim
+  name: wordpress-mysql-pv-claim
   labels:
     app: wordpress
 spec:
@@ -26,7 +26,7 @@ spec:
       storage: 20Gi
   selector:
     matchLabels:
-      aspect: "mysql"
+      aspect: mysql
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -60,4 +60,4 @@ spec:
       volumes:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
-          claimName: mysql-pv-claim
+          claimName: wordpress-mysql-pv-claim

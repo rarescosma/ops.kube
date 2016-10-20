@@ -7,15 +7,15 @@ DOCKER_REGISTRY="localhost:5000"
 
 create() {
   delete &>/dev/null
-  kubectl create -f "${DOT}/wp-volumes.yaml"
+  kubectl create -f "${DOT}/volumes.yaml"
   kubectl create -f "${DOT}/mysql-deployment.yaml"
-  kubectl create -f "${DOT}/wp-deployment.yaml"
+  kubectl create -f "${DOT}/app-deployment.yaml"
 }
 
 delete() {
-  kubectl delete -f "${DOT}/wp-deployment.yaml"
+  kubectl delete -f "${DOT}/app-deployment.yaml"
   kubectl delete -f "${DOT}/mysql-deployment.yaml"
-  kubectl delete -f "${DOT}/wp-volumes.yaml"
+  kubectl delete -f "${DOT}/volumes.yaml"
 }
 
 $@

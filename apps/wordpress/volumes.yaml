@@ -1,22 +1,22 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: wp-pv
+  name: wordpress-app-pv
   labels:
     type: local
-    aspect: wordpress
+    aspect: app
 spec:
   capacity:
     storage: 20Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /kube/.pv/wordpress
+    path: /kube/.pv/wordpress/app
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: mysql-pv
+  name: wordpress-mysql-pv
   labels:
     type: local
     aspect: mysql
@@ -26,4 +26,4 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /kube/.pv/mysql
+    path: /kube/.pv/wordpress/mysql

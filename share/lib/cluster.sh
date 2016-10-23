@@ -22,12 +22,13 @@ cluster::stop_worker() {
 
 cluster::down() {
   for mid in $(vm::discover master); do
-    vm::exec ${mid} "halt"
+    vm::exec ${mid} "halt" &
   done
 
   for wid in  $(vm::discover worker); do
-    vm::exec ${wid} cluster::stop_worker
+    vm::exec ${wid} cluster::stop_worker &
   done
 
+  wait
   post::route_clean
 }

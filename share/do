@@ -36,8 +36,10 @@ prepare() {
 orchestrate() {
   orchestrate::master 0
 
+  # Configure 'kubectl' early so we can deploy the local docker registry
   post::configure_kc
-  for x in $(seq 1 12); do
+
+  for _ in $(seq 1 12); do
     deploy::apply_addon docker-registry/docker-registry-daemonset.yaml \
     && break;
     sleep 1
@@ -54,11 +56,6 @@ post() {
 post::route() {
   post::route_clean
   post::route_add
-}
-
-all() {
-  prepare
-  cluster::up
 }
 
 # Verbatim, yeah!

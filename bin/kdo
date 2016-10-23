@@ -10,6 +10,7 @@ DOCKER_REGISTRY="localhost:5000"
 source $SCRIPTPATH/../share/do -lib
 
 up() {
+  prepare
   cluster::up
   resolvconf::up
 

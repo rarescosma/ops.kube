@@ -45,7 +45,9 @@ orchestrate() {
     sleep 1
   done
 
-  orchestrate::worker 0
+  for x in $(seq 0 $((VM_NUM_WORKERS-1))); do
+    orchestrate::worker $x
+  done
 }
 
 post() {

@@ -4,6 +4,8 @@ metadata:
   name: wordpress
   labels:
     app: wordpress
+    visualize: "true"
+    name: "wordpress"
 spec:
   clusterIP: 10.32.0.200
   ports:
@@ -42,6 +44,9 @@ spec:
       labels:
         app: wordpress
         tier: frontend
+        visualize: "true"
+        name: wordpress
+        uses: wordpress-mysql
     spec:
       containers:
       - image: localhost:5000/wordpress:4.6.1-apache

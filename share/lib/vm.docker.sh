@@ -58,3 +58,8 @@ vm::assert_vm() {
   (cat /proc/1/cgroup | grep docker) &>/dev/null \
   || (echo "Error: not in a Docker container" && exit 1)
 }
+
+vm::clean() {
+  # todo - cleanup dns container
+  echo "Cleaning docker vm engine..."
+}

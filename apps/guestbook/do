@@ -21,13 +21,13 @@ delete() {
 upgrade::frontend() {
   local version=$1
   kubectl set image deployment/frontend \
-    "php-redis=${DOCKER_REGISTRY}/guestbook/frontend:${version}"
+    "php-redis=${DOCKER_REGISTRY}/kube/apps/guestbook/frontend:${version}"
 }
 
 upgrade::redis() {
   local version=$1
   kubectl set image deployment/redis-slave \
-    "slave=${DOCKER_REGISTRY}/redis-slave:${version}"
+    "slave=${DOCKER_REGISTRY}/kube/apps/guestbook/redis-slave:${version}"
 }
 
 $@

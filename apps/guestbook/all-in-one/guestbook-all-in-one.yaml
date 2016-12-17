@@ -62,7 +62,7 @@ spec:
     spec:
       containers:
       - name: master
-        image: localhost:5000/redis  # or just image: redis
+        image: localhost:5000/kube/apps/guestbook/redis-master:e2e  # or just image: redis
         resources:
           requests:
             cpu: 100m
@@ -126,7 +126,7 @@ spec:
     spec:
       containers:
       - name: slave
-        image: localhost:5000/redis-slave:v0
+        image: localhost:5000/kube/apps/guestbook/redis-slave:v1
         resources:
           requests:
             cpu: 100m
@@ -189,7 +189,7 @@ spec:
     spec:
       containers:
       - name: php-redis
-        image: localhost:5000/guestbook/frontend:v0
+        image: localhost:5000/kube/apps/guestbook/frontend:v4
         resources:
           requests:
             cpu: 100m

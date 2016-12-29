@@ -49,7 +49,7 @@ spec:
         uses: wordpress-mysql
     spec:
       containers:
-      - image: localhost:5000/wordpress:4.6.1-apache
+      - image: localhost:5000/kube/apps/wordpress/wordpress:4.6.1-apache
         name: wordpress
         env:
         - name: WORDPRESS_DB_HOST

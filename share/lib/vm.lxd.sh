@@ -32,7 +32,7 @@ vm::create_base_image() {
 
 vm::launch() {
   local vm="$1"
-  (lxc launch $LXD_BASE_IMG $vm --profile $LXD_PROFILE || lxc start $vm) 2>/dev/null
+  (lxc launch $LXD_BASE_IMG $vm --profile $LXD_PROFILE || lxc start $vm)
 }
 
 vm::discover() {

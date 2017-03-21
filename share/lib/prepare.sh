@@ -11,6 +11,12 @@ prepare::bin::sync_kube() {
 
     utils::download $KUBE_TGZ "${tmp}/archive.tgz"
     tar -C $tmp -xf "${tmp}/archive.tgz"
+
+    # 1.5.4 compatibility - need an extra step to pull kube binaries
+    pushd "${tmp}/kubernetes/cluster"
+    KUBERNETES_SKIP_CONFIRM=1 ./get-kube-binaries.sh
+    popd
+
     pushd "${tmp}/kubernetes/server"
     tar xzf kubernetes-server-linux-amd64.tar.gz
     popd

@@ -1,8 +1,10 @@
 #!/bin/bash
 
+CACHE_DIR="${KUBE_PV}/cache"
+
 prepare::bin::sync_kube() {
   echo "Checking Kube bins v.${KUBE_VERSION}"
-  local target="${DOT}/.bincache/kube_${KUBE_VERSION}" && mkdir -p $target
+  local target="${CACHE_DIR}/kube_${KUBE_VERSION}" && mkdir -p $target
 
   if [ ! -x "${target}/kubectl" ]; then
     local tmp=$(mktemp -d)
@@ -22,7 +24,7 @@ prepare::bin::sync_kube() {
     popd
 
     for bin in "${KUBE_BINS[@]}"; do
-      target="${DOT}/.bincache/kube_${KUBE_VERSION}/${bin}"
+      target="${CACHE_DIR}/kube_${KUBE_VERSION}/${bin}"
       [ -x $target ] || mv "${release_dir}/${bin}" $target
     done
   fi
@@ -30,13 +32,13 @@ prepare::bin::sync_kube() {
 
 prepare::bin::sync_etcd() {
   echo "Checking Etcd bins v.${ETCD_VERSION}"
-  local target="${DOT}/.bincache/etcd_${ETCD_VERSION}" && mkdir -p $target
+  local target="${CACHE_DIR}/etcd_${ETCD_VERSION}" && mkdir -p $target
   [ -x "${target}/etcdctl" ] || utils::pull_tgz $ETCD_TGZ $target etcd
 }
 
 prepare::bin::sync_docker() {
   echo "Checking Docker bins v.${DOCKER_VERSION}"
-  local target="${DOT}/.bincache/docker_${DOCKER_VERSION}" && mkdir -p $target
+  local target="${CACHE_DIR}/docker_${DOCKER_VERSION}" && mkdir -p $target
   [ -x "${target}/docker" ] || utils::pull_tgz $DOCKER_TGZ $target docker
 }
 
@@ -47,14 +49,14 @@ prepare::bin() {
   prepare::bin::sync_docker &
   wait
 
-  echo "Creating symlinks"
-  pushd $DOT/bin
-  ln -sf ../.bincache/kube_${KUBE_VERSION}/* $DOT/bin/
-  ln -sf ../.bincache/etcd_${ETCD_VERSION}/* $DOT/bin/
-  ln -sf ../.bincache/docker_${DOCKER_VERSION}/* $DOT/bin/
+  # echo "Creating symlinks"
+  pushd ${KUBE_PV}/bin
+  ln -sf ../cache/kube_${KUBE_VERSION}/* .
+  ln -sf ../cache/etcd_${ETCD_VERSION}/* .
+  ln -sf ../cache/docker_${DOCKER_VERSION}/* .
   popd
 
-  chmod -R +x $DOT/.bincache
+  chmod -R +x ${CACHE_DIR}
 }
 
 prepare::tls() {

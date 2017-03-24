@@ -85,7 +85,6 @@ metadata:
     app: redis
     tier: backend
     role: slave
-    visualize: "true"
 spec:
   ports:
     # the port that this service should serve on
@@ -122,7 +121,6 @@ spec:
         app: redis
         role: slave
         tier: backend
-        visualize: "true"
     spec:
       containers:
       - name: slave
@@ -153,6 +151,7 @@ spec:
   # if your cluster supports it, uncomment the following to automatically create
   # an external load-balanced IP for the frontend service.
   # type: LoadBalancer
+  clusterIP: 10.32.0.101
   ports:
     # the port that this service should serve on
   - port: 80

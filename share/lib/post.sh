@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 post::configure_kc() {
   # Source cluster.sh again to capture MASTER0_IP

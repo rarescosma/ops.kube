@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 deploy::replace_addon() {
   local addon="$1"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 CACHE_DIR="${KUBE_PV}/cache"
 

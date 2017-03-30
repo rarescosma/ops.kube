@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 provision::master() {
   utils::export_vm

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 orchestrate::master() {
   local index=${1:-"0"}

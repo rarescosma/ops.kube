@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 vm::prepare() {
   vm::update_profile

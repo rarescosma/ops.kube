@@ -46,14 +46,18 @@ prepare::bin() {
   mkdir -p $DOT/.bincache $DOT/bin
   prepare::bin::sync_kube &
   prepare::bin::sync_etcd &
-  prepare::bin::sync_docker &
+  if [ -z ${USE_SYSTEM_DOCKER+x} ]; then
+    prepare::bin::sync_docker &
+  fi
   wait
 
-  # echo "Creating symlinks"
+  echo "Creating symlinks"
   pushd ${KUBE_PV}/bin
   ln -sf ../cache/kube_${KUBE_VERSION}/* .
   ln -sf ../cache/etcd_${ETCD_VERSION}/* .
-  ln -sf ../cache/docker_${DOCKER_VERSION}/* .
+  if [ -z ${USE_SYSTEM_DOCKER+x} ]; then
+    ln -sf ../cache/docker_${DOCKER_VERSION}/* .
+  fi
   popd
 
   chmod -R +x ${CACHE_DIR}

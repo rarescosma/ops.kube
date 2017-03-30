@@ -1,6 +1,4 @@
-#!/bin/bash
-
-# Contains namespaced functions for all stages
+#!/usr/bin/env bash
 
 export DOT=$( cd -P "$( dirname $(readlink -f "${BASH_SOURCE[0]}") )" && pwd )
 export TPL=$DOT/templates

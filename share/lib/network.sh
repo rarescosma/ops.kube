@@ -18,7 +18,7 @@ network::flush_iptables() {
   $ipt -t nat -X
   $ipt -t mangle -F
   $ipt -t mangle -X
-  $ipt iptables -t raw -F
+  $ipt -t raw -F
   $ipt -t raw -X
 }
 

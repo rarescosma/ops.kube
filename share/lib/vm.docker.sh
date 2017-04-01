@@ -28,7 +28,7 @@ vm::launch() {
   --cap-add=SYS_ADMIN \
   --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro \
   -v "${DOT}:/kube" \
-  -v "${KUBE_PV}:/pv" \
+  -v "${KUBE_PV}:${KUBE_PV}" \
   ${DOCKER_BASE_IMG} /sbin/init || docker start ${vm}
 }
 
@@ -63,4 +63,5 @@ vm::assert_vm() {
 vm::clean() {
   # todo - cleanup dns container
   echo "Cleaning docker vm engine..."
+  docker rm -f dnsdock
 }

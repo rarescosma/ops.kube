@@ -2,6 +2,11 @@
 
 CACHE_DIR="${KUBE_PV}/cache"
 
+prepare() {
+  prepare::bin
+  prepare::tls
+}
+
 prepare::bin::sync_kube() {
   echo "Checking Kube bins v.${KUBE_VERSION}"
   local target="${CACHE_DIR}/kube_${KUBE_VERSION}" && mkdir -p $target

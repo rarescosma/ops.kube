@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
-cluster::destroy() {
-  vm::destroy $(vm::discover master)
-  vm::destroy $(vm::discover worker)
-  post::route_clean
-  cp -f "${DOT}/cluster.sh.empty" "${DOT}/cluster.sh"
-}
+cluster::stop() {
+  for mid in $(vm::discover master); do
+    vm::exec ${mid} "halt" &
+  done
 
-cluster::up() {
-  orchestrate
-  post
+  for wid in  $(vm::discover worker); do
+    vm::exec ${wid} cluster::stop_worker &
+  done
+
+  wait
 }
 
 cluster::stop_worker() {
@@ -20,15 +20,27 @@ cluster::stop_worker() {
   halt
 }
 
-cluster::down() {
-  for mid in $(vm::discover master); do
-    vm::exec ${mid} "halt" &
-  done
+cluster::configure() {
+  # Source cluster.sh again to capture MASTER0_IP
+  source "${DOT}/cluster.sh"
+  local kc='kubectl config'
 
-  for wid in  $(vm::discover worker); do
-    vm::exec ${wid} cluster::stop_worker &
-  done
+  $kc set-cluster kube-cluster-name \
+  --certificate-authority="${DOT}/etc/tls/ca.pem" \
+  --embed-certs=true \
+  --server="https://${MASTER0_IP}:6443"
 
-  wait
-  post::route_clean
+  $kc set-credentials admin --token "${SECRET_TOKEN}"
+
+  $kc set-context default-context \
+  --cluster=kube-cluster-name \
+  --user=admin
+
+  $kc use-context default-context
+}
+
+cluster::clean() {
+  vm::destroy $(vm::discover master)
+  vm::destroy $(vm::discover worker)
+  cp -f "${DOT}/cluster.sh.empty" "${DOT}/cluster.sh"
 }

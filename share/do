@@ -1,61 +1,57 @@
 #!/usr/bin/env bash
 
+set -x
+
 export DOT=$( cd -P "$( dirname $(readlink -f "${BASH_SOURCE[0]}") )" && pwd )
 export TPL=$DOT/templates
 source $DOT/env.sh
 source $DOT/cluster.sh
-source $DOT/lib/utils.sh
 
+source $DOT/lib/utils.sh
+source $DOT/lib/cluster.sh
+source "${DOT}/lib/host.${KUBE_HOST}.sh"
+source $DOT/lib/network.sh
+source $DOT/lib/orchestrate.sh
+source $DOT/lib/prepare.sh
+source $DOT/lib/provision.sh
 source "${DOT}/lib/vm.${VM_ENGINE}.sh"
 
-source $DOT/lib/cluster.sh
-source $DOT/lib/prepare.sh
-source $DOT/lib/orchestrate.sh
-source $DOT/lib/provision.sh
-source $DOT/lib/post.sh
-source $DOT/lib/deploy.sh
+start() {
+  utils::function_exists "host::prepare" && host::prepare
+  prepare
+  utils::function_exists "vm::prepare" && vm::prepare
+  orchestrate
 
+  cluster::configure
+  network::cycle
+
+  utils::function_exists "host::post" && host::post
+}
+
+stop() {
+  utils::function_exists "host::stop" && host::stop
+
+  cluster::stop
+  network::stop
+}
 
 clean() {
+  stop
+
   # Clean prepare stage
   rm -rf $DOT/bin/*
   rm -rf $DOT/etc/tls/*
 
-  cluster::destroy
+  cluster::clean
   utils::function_exists "vm::clean" && vm::clean
-}
-
-prepare() {
-  prepare::bin
-  prepare::tls
-  vm::prepare
 }
 
 orchestrate() {
   orchestrate::master 0
 
-  # Configure 'kubectl' early so we can deploy the local docker registry
-  post::configure_kc
-
-  for _ in $(seq 1 12); do
-    deploy::apply_addon docker-registry/docker-registry-daemonset.yaml \
-    && break;
-    sleep 1
-  done
-
   for x in $(seq 0 $((VM_NUM_WORKERS-1))); do
     orchestrate::worker $x
   done
-}
-
-post() {
-  post::configure_kc
-  post::route
-}
-
-post::route() {
-  post::route_clean
-  post::route_add
 }
 
 # Verbatim, yeah!

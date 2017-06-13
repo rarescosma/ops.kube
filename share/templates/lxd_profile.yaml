@@ -17,6 +17,10 @@ devices:
     path: /kube
     source: ${DOT}
     type: disk
+  pvdir:
+    path: ${KUBE_PV}
+    source: ${KUBE_PV}
+    type: disk
   tuntap:
     path: /dev/net/tun
     type: unix-char

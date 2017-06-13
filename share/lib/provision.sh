@@ -2,6 +2,7 @@
 
 provision::master() {
   utils::export_vm
+
   provision::base -skipapt
 
   utils::template $TPL/auth_token.csv > /kube/etc/auth/token.csv
@@ -12,7 +13,12 @@ provision::master() {
 
 provision::worker() {
   utils::export_vm
+
   provision::base -skipapt
+
+  if [ ! -z ${USE_SYSTEM_DOCKER+x} ]; then
+      provision::install_docker
+  fi
 
   export POD_CIDR=$(utils::docker_subnet $VM_IP)
   export POD_BIP=$(echo "${POD_CIDR}" | sed -e "s/0\.0/0\.1/g")
@@ -20,6 +26,13 @@ provision::worker() {
   utils::template $TPL/kubelet_kubeconfig > /kube/etc/kubelet/kubeconfig
 
   provision::setup_units ${WORKER_UNITS}
+}
+
+provision::install_docker() {
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+  add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  apt update
+  apt -y install docker-ce
 }
 
 provision::base() {
@@ -32,7 +45,7 @@ provision::base() {
     # Update/upgrade + essentials
     apt update
     apt -y full-upgrade
-    apt -y install curl wget ncdu htop iptables socat
+    apt -y install curl wget ncdu htop iptables dnsutils socat software-properties-common
   fi
 
   # Profile / aliases / etc.

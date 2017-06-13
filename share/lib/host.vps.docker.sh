@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 
 host::prepare() {
+  # Stop docker
+  sudo systemctl stop docker
+  sudo pkill -f docker
+  sudo ifconfig docker0 down
+  sudo brctl delbr docker0
+
   # Flush all iptables rules
   network::flush_iptables
   sudo iptables-restore < /etc/iptables.up.rules
 
   # Reboot the docker daemon
-  sudo systemctl restart docker
+  sudo systemctl start docker
 }
 
 host::post() {
@@ -18,7 +24,7 @@ host::post() {
   fi
 }
 
-host::post() {
+host::resolvconf::start() {
   sudo chattr -i /etc/resolv.conf
   cat << __EOF__ | sudo tee /etc/resolv.conf
 search svc.kubernetes.local

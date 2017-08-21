@@ -4,22 +4,25 @@ provision::master() {
   utils::export_vm
   provision::base -skipapt
 
-  utils::template $TPL/auth_token.csv > /kube/etc/auth/token.csv
-  cp -f $TPL/auth_policy.jsonl /kube/etc/auth/policy.jsonl
+  utils::template "$TPL/auth_token.csv" > /kube/etc/auth/token.csv
+  cp -f "$TPL/auth_policy.jsonl" /kube/etc/auth/policy.jsonl
 
-  provision::setup_units ${MASTER_UNITS}
+  provision::setup_units "${MASTER_UNITS}"
 }
 
 provision::worker() {
   utils::export_vm
   provision::base -skipapt
 
-  export POD_CIDR=$(utils::docker_subnet $VM_IP)
-  export POD_BIP=$(echo "${POD_CIDR}" | sed -e "s/0\.0/0\.1/g")
+  POD_CIDR=$(utils::docker_subnet "$VM_IP")
+  export POD_CIDR
+  POD_BIP=${POD_CIDR//0.0/0.1}
+  # POD_BIP=$(echo "${POD_CIDR}" | sed -e "s/0\.0/0\.1/g")
+  export POD_BIP
 
-  utils::template $TPL/kubelet_kubeconfig > /kube/etc/kubelet/kubeconfig
+  utils::template "$TPL/kubelet_kubeconfig" > /kube/etc/kubelet/kubeconfig
 
-  provision::setup_units ${WORKER_UNITS}
+  provision::setup_units "${WORKER_UNITS}"
 }
 
 provision::base() {
@@ -37,10 +40,10 @@ provision::base() {
 
   # Profile / aliases / etc.
   local rc="/root/.bashrc"
-  grep -q -F '##kube' $rc || cat $DOT/templates/bashrc >> $rc
+  grep -q -F '##kube' "$rc" || cat "$DOT/templates/bashrc" >> "$rc"
 
   # Link binaries
-  ln -sf ${KUBE_PV}/bin/* /usr/bin/
+  ln -sf "${KUBE_PV}/bin/"* /usr/bin/
 }
 
 provision::setup_units() {
@@ -51,7 +54,7 @@ provision::setup_units() {
   systemctl daemon-reload
 
   for unit in "$@"; do
-    systemctl enable $unit
-    systemctl restart $unit || systemctl start $unit
+    systemctl enable "$unit"
+    systemctl restart "$unit" || systemctl start "$unit"
   done
 }

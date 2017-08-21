@@ -3,7 +3,7 @@
 host::prepare() {
   # Flush all iptables rules
   network::flush_iptables
-  sudo iptables-restore < /etc/iptables.up.rules
+  sudo cat /etc/iptables.up.rules | sudo iptables-restore
 
   # Reboot the docker daemon
   sudo systemctl restart docker

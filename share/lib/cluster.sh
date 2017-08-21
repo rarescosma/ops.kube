@@ -2,11 +2,11 @@
 
 cluster::stop() {
   for mid in $(vm::discover master); do
-    vm::exec ${mid} "halt" &
+    vm::exec "${mid}" "halt" &
   done
 
   for wid in  $(vm::discover worker); do
-    vm::exec ${wid} cluster::stop_worker &
+    vm::exec "${wid}" cluster::stop_worker &
   done
 
   wait
@@ -16,12 +16,13 @@ cluster::stop_worker() {
   vm::assert_vm
 
   systemctl stop kubelet || systemctl stop kubelet_single
-  docker rm -f $(docker ps -a -q)
+  docker rm -f "$(docker ps -a -q)"
   halt
 }
 
 cluster::configure() {
   # Source cluster.sh again to capture MASTER0_IP
+  # shellcheck source=/dev/null
   source "${DOT}/cluster.sh"
   local kc='kubectl config'
 
@@ -40,7 +41,7 @@ cluster::configure() {
 }
 
 cluster::clean() {
-  vm::destroy $(vm::discover master)
-  vm::destroy $(vm::discover worker)
+  vm::destroy "$(vm::discover master)"
+  vm::destroy "$(vm::discover worker)"
   cp -f "${DOT}/cluster.sh.empty" "${DOT}/cluster.sh"
 }

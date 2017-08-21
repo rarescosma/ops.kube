@@ -2,18 +2,29 @@
 
 set -x
 
-export DOT=$( cd -P "$( dirname $(readlink -f "${BASH_SOURCE[0]}") )" && pwd )
+DOT=$(cd -P "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
+export DOT
 export TPL=$DOT/templates
-source $DOT/env.sh
-source $DOT/cluster.sh
 
-source $DOT/lib/utils.sh
-source $DOT/lib/cluster.sh
+# shellcheck source=env.sh
+source "$DOT/env.sh"
+# shellcheck source=cluster.sh
+source "$DOT/cluster.sh"
+# shellcheck source=lib/utils.sh
+source "$DOT/lib/utils.sh"
+# shellcheck source=lib/cluster.sh
+source "$DOT/lib/cluster.sh"
+# shellcheck source=/dev/null
 source "${DOT}/lib/host.${KUBE_HOST}.sh"
+# shellcheck source=lib/network.sh
 source $DOT/lib/network.sh
+# shellcheck source=lib/orchestrate.sh
 source $DOT/lib/orchestrate.sh
+# shellcheck source=lib/prepare.sh
 source $DOT/lib/prepare.sh
+# shellcheck source=lib/provision.sh
 source $DOT/lib/provision.sh
+# shellcheck source=/dev/null
 source "${DOT}/lib/vm.${VM_ENGINE}.sh"
 
 start() {
@@ -39,8 +50,8 @@ clean() {
   stop
 
   # Clean prepare stage
-  rm -rf $DOT/bin/*
-  rm -rf $DOT/etc/tls/*
+  rm -rf "${DOT:?}/bin/*"
+  rm -rf "$DOT/etc/tls/*"
 
   cluster::clean
   utils::function_exists "vm::clean" && vm::clean
@@ -50,11 +61,11 @@ orchestrate() {
   orchestrate::master 0
 
   for x in $(seq 0 $((VM_NUM_WORKERS-1))); do
-    orchestrate::worker $x
+    orchestrate::worker "$x"
   done
 }
 
 # Verbatim, yeah!
 if [[ "-lib" != "$1" ]]; then
-  $@
+  "$@"
 fi

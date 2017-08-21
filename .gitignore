@@ -6,3 +6,4 @@
 /share/cluster.sh
 /share/etc/*
 /addons/cluster-insight
+/bin/kubectl

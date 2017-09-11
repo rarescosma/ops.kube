@@ -18,7 +18,7 @@ host::post() {
   fi
 }
 
-host::post() {
+host::resolvconf::start() {
   sudo chattr -i /etc/resolv.conf
   cat << __EOF__ | sudo tee /etc/resolv.conf
 search svc.kubernetes.local

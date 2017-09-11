@@ -7,7 +7,7 @@ provision::master() {
   utils::template "$TPL/auth_token.csv" > /kube/etc/auth/token.csv
   cp -f "$TPL/auth_policy.jsonl" /kube/etc/auth/policy.jsonl
 
-  provision::setup_units "${MASTER_UNITS}"
+  provision::setup_units ${MASTER_UNITS}
 }
 
 provision::worker() {
@@ -22,7 +22,7 @@ provision::worker() {
 
   utils::template "$TPL/kubelet_kubeconfig" > /kube/etc/kubelet/kubeconfig
 
-  provision::setup_units "${WORKER_UNITS}"
+  provision::setup_units ${WORKER_UNITS}
 }
 
 provision::base() {

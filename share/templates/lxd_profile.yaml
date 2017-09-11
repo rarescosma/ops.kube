@@ -11,11 +11,15 @@ devices:
   eth0:
     name: ${VM_IFACE}
     nictype: bridged
-    parent: lxd
+    parent: lxdbr0
     type: nic
   kubedir:
     path: /kube
     source: ${DOT}
+    type: disk
+  kubepvdir:
+    path: /pv/kube
+    source: ${KUBE_PV}
     type: disk
   tuntap:
     path: /dev/net/tun

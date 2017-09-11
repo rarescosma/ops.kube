@@ -11,7 +11,7 @@ host::resolvconf::start() {
   cat << __EOF__ | sudo tee /etc/resolv.conf
 search svc.kubernetes.local
 nameserver 10.32.0.10
-nameserver 10.0.40.129
+nameserver 10.0.40.1
 __EOF__
   sudo chattr +i /etc/resolv.conf
 }

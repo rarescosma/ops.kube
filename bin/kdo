@@ -12,7 +12,7 @@ add_worker() {
   local index=$1; shift
   orchestrate::worker $index
   utils::function_exists "host::post" && host::post
-  post::route
+  network::cycle
 }
 
 deploy::replace_addon() {

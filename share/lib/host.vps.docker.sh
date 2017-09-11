@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 
 host::prepare() {
+  # Stop docker
+  sudo systemctl stop docker
+  sudo pkill -f docker
+  sudo ifconfig docker0 down
+  sudo brctl delbr docker0
+
   # Flush all iptables rules
   network::flush_iptables
   sudo cat /etc/iptables.up.rules | sudo iptables-restore
 
   # Reboot the docker daemon
-  sudo systemctl restart docker
+  sudo systemctl start docker
 }
 
 host::post() {

@@ -11,14 +11,14 @@ devices:
   eth0:
     name: ${VM_IFACE}
     nictype: bridged
-    parent: lxdbr0
+    parent: ${LXD_BRIDGE}
     type: nic
   kubedir:
     path: /kube
     source: ${DOT}
     type: disk
-  kubepvdir:
-    path: /pv/kube
+  pvdir:
+    path: ${KUBE_PV}
     source: ${KUBE_PV}
     type: disk
   tuntap:

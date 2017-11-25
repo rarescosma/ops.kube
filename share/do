@@ -33,7 +33,6 @@ start() {
   utils::function_exists "vm::prepare" && vm::prepare
   orchestrate
 
-  cluster::configure
   network::cycle
 
   utils::function_exists "host::post" && host::post

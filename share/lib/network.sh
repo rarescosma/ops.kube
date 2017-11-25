@@ -31,11 +31,8 @@ network::start() {
     sudo route del -net "$docker_subnet" &>/dev/null
     sudo route add -net "$docker_subnet" gw "$worker_ip"
 
-    # Proxy services thru the first found worker
-    if [ -z "${proxy_worker+x}" ]; then
-      sudo route add -net "$KUBE_SERVICE_CLUSTER_IP_RANGE" gw "$worker_ip"
-      proxy_worker="done"
-    fi
+    # Proxy services thru all workers
+    sudo route add -net "$KUBE_SERVICE_CLUSTER_IP_RANGE" gw "$worker_ip"
   done
 }
 

@@ -1,0 +1,4 @@
+* update addon container versions
+* masquerade by default in the base lxc/docker images
+* lxd initialization (bridge + root device derpery)
+* revamp cluster::configure

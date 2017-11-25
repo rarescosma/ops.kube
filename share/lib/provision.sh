@@ -48,7 +48,7 @@ provision::base() {
     # Update/upgrade + essentials
     apt update
     apt -y full-upgrade
-    apt -y install curl wget ncdu htop iptables socat
+    apt -y install curl wget ncdu htop iptables socat software-properties-common
   fi
 
   # Profile / aliases / etc.

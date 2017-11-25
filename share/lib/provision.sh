@@ -23,10 +23,10 @@ provision::worker() {
   POD_CIDR=$(utils::docker_subnet "$VM_IP")
   export POD_CIDR
   POD_BIP=${POD_CIDR//0.0/0.1}
-  # POD_BIP=$(echo "${POD_CIDR}" | sed -e "s/0\.0/0\.1/g")
   export POD_BIP
 
   utils::template "$TPL/kubelet_kubeconfig" > /kube/etc/kubelet/kubeconfig
+  echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
   provision::setup_units ${WORKER_UNITS}
 }

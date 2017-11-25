@@ -10,14 +10,14 @@ ExecStart=/usr/bin/kubelet \
   --port=10250 \
   --hostname-override=${VM_HOSTNAME} \
   --allow-privileged=true \
-  --api-servers=https://${MASTER0_IP}:6443 \
   --cluster-dns=10.32.0.10 \
   --cluster-domain=kubernetes.local \
   --container-runtime=docker \
   --docker=unix:///var/run/docker.sock \
   --kubeconfig=/kube/etc/kubelet/kubeconfig \
   --tls-cert-file=/kube/etc/tls/kubernetes.pem \
-  --tls-private-key-file=/kube/etc/tls/kubernetes-key.pem
+  --tls-private-key-file=/kube/etc/tls/kubernetes-key.pem \
+  --fail-swap-on=false
 
 Restart=on-failure
 RestartSec=5

@@ -22,7 +22,7 @@ vm::create_base_image() {
   local vm
   vm="kubetmp-$(utils::get_random_string)"
 
-  lxc launch "$LXD_IMG_FROM" "$vm" --profile "$LXD_PROFILE" -s default || lxc start "$vm"
+  lxc launch "$LXD_IMG_FROM" "$vm" --profile "$LXD_PROFILE" || lxc start "$vm"
   vm::exec "$vm" provision::base
 
   lxc stop "$vm";
@@ -32,7 +32,7 @@ vm::create_base_image() {
 
 vm::launch() {
   local vm="$1"
-  (lxc launch "$LXD_BASE_IMG" "$vm" --profile "$LXD_PROFILE" -s default || lxc start "$vm")
+  (lxc launch "$LXD_BASE_IMG" "$vm" --profile "$LXD_PROFILE" || lxc start "$vm")
 }
 
 vm::discover() {

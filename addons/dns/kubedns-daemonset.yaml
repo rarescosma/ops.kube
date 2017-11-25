@@ -13,7 +13,7 @@
 # limitations under the License.
 
 apiVersion: extensions/v1beta1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: kube-dns-v19
   namespace: kube-system
@@ -22,7 +22,7 @@ metadata:
     version: v19
     kubernetes.io/cluster-service: "true"
 spec:
-  replicas: 1
+  # replicas: 1
   selector:
     matchLabels:
       k8s-app: kube-dns

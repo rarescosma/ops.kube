@@ -1,0 +1,10 @@
+[Unit]
+Description=Masquerade for pod internet access
+DefaultDependencies=no
+After=network.target
+[Service]
+Type=oneshot
+ExecStart=/sbin/iptables -t nat -A POSTROUTING -o ${VM_IFACE} -j MASQUERADE
+RemainAfterExit=yes
+[Install]
+WantedBy=multi-user.target

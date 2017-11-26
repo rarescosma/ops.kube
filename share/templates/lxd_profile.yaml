@@ -24,3 +24,7 @@ devices:
   tuntap:
     path: /dev/net/tun
     type: unix-char
+  root:
+    path: /
+    pool: default
+    type: disk

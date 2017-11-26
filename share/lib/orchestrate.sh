@@ -21,4 +21,9 @@ orchestrate::worker() {
 
   vm::launch "$vm"
   vm::exec "$vm" provision::worker
+
+  worker_ip=$(vm::exec "$vm" utils::wait_ip)
+
+  docker_subnet=$(utils::docker_subnet "$worker_ip")
+  sudo ip route replace "$docker_subnet" via $worker_ip
 }

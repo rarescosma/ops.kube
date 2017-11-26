@@ -7,3 +7,5 @@
 /share/etc/*
 /addons/cluster-insight
 /bin/kubectl
+/share/lib/host.sh
+

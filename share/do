@@ -15,7 +15,9 @@ source "$DOT/lib/utils.sh"
 # shellcheck source=lib/cluster.sh
 source "$DOT/lib/cluster.sh"
 # shellcheck source=/dev/null
-source "${DOT}/lib/host.${KUBE_HOST}.sh"
+if test -f "${DOT}/lib/host.sh"; then
+  source "${DOT}/lib/host.sh"
+fi
 # shellcheck source=lib/network.sh
 source $DOT/lib/network.sh
 # shellcheck source=lib/orchestrate.sh

@@ -49,7 +49,10 @@ prepare::bin::sync_docker() {
 }
 
 prepare::bin() {
+  mkdir -p "${CACHE_DIR}"
   mkdir -p "$DOT/.bincache" "$DOT/bin"
+  mkdir -p "${KUBE_PV}/bin"
+
   prepare::bin::sync_kube &
   prepare::bin::sync_etcd &
   if [ -z "${USE_SYSTEM_DOCKER+x}" ]; then

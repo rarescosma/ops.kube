@@ -38,7 +38,7 @@ network::start() {
 
 network::stop() {
   for subnet in $(seq 1 255); do
-    sudo route del -net "172.${subnet}.0.0/16" &>/dev/null &
+    sudo route del -net "10.${subnet}.0.0/16" &>/dev/null &
   done
   wait
   sudo route del -net "$KUBE_SERVICE_CLUSTER_IP_RANGE" &>/dev/null

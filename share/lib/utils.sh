@@ -89,7 +89,7 @@ utils::replace_line_by_prefix() {
 
 utils::docker_subnet() {
   local worker_ip=$1
-  echo "172.$(echo "$worker_ip" | cut -d. -f4).0.0/16"
+  echo "10.$(echo "$worker_ip" | cut -d. -f4).0.0/16"
 }
 
 utils::function_exists() {

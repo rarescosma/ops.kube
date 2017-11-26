@@ -36,7 +36,7 @@ addon::registry() {
 }
 
 addon::dns() {
-  deploy::recreate_addon dns/kubedns-deployment.yaml
+  deploy::recreate_addon dns/kubedns-daemonset.yaml
   deploy::recreate_addon dns/kubedns-service.yaml
 }
 

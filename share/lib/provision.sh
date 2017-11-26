@@ -56,7 +56,7 @@ provision::base() {
   grep -q -F '##kube' "$rc" || cat "$DOT/templates/bashrc" >> "$rc"
 
   # Link binaries
-  ln -sf "${KUBE_PV}/bin/"* /usr/bin/
+  ln -sf "/pv/kube/bin/"* /usr/bin/
 }
 
 provision::setup_units() {

@@ -18,7 +18,7 @@ devices:
     source: ${DOT}
     type: disk
   pvdir:
-    path: ${KUBE_PV}
+    path: /pv/kube
     source: ${KUBE_PV}
     type: disk
   tuntap:

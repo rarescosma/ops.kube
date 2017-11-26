@@ -26,18 +26,18 @@ cluster::configure() {
   source "${DOT}/cluster.sh"
   local kc='kubectl config'
 
-  $kc set-cluster kube-cluster-name \
+  $kc set-cluster "${CLUSTER_NAME}" \
   --certificate-authority="${DOT}/etc/tls/ca.pem" \
   --embed-certs=true \
   --server="https://${MASTER0_IP}:6443"
 
-  $kc set-credentials admin --token "${SECRET_TOKEN}"
+  $kc set-credentials "${CLUSTER_NAME}-root" --token "${SECRET_TOKEN}"
 
-  $kc set-context default-context \
-  --cluster=kube-cluster-name \
-  --user=admin
+  $kc set-context "${CLUSTER_NAME}" \
+  --cluster="${CLUSTER_NAME}" \
+  --user="${CLUSTER_NAME}-root"
 
-  $kc use-context default-context
+  $kc use-context "${CLUSTER_NAME}"
 }
 
 cluster::clean() {

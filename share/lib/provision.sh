@@ -27,6 +27,7 @@ provision::worker() {
 
   utils::template "$TPL/kubelet_kubeconfig" > /kube/etc/kubelet/kubeconfig
   echo "nameserver 8.8.8.8" > /etc/resolv.conf
+  chmod -w /etc/resolv.conf
 
   provision::setup_units ${WORKER_UNITS}
 }

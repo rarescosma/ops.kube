@@ -49,7 +49,7 @@ utils::get_ip() {
 }
 
 utils::wait_ip() {
-  dumpstack "${VM_IFACE} $*"
+  dumpstack "${VM_IFACE}"
   local ip
   while true; do
     ip=$(utils::get_ip "$VM_IFACE")

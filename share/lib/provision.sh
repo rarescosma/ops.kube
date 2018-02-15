@@ -51,9 +51,11 @@ provision::base() {
 
   if [[ "$1" != "-skipapt" ]]; then
     # Update/upgrade + essentials
+    sed -ie 's/archive.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+    sed -ie 's/security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
     apt update
     apt -y full-upgrade
-    apt -y install curl wget ncdu htop iptables socat software-properties-common
+    apt -y install curl wget iptables software-properties-common
   fi
 
   # Profile / aliases / etc.

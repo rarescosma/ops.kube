@@ -37,7 +37,7 @@ utils::template() {
 }
 
 utils::get_random_string() {
-  < /dev/urandom tr -dc A-Za-z0-9 | head -c"${1:-8}"
+  uuidgen || cat /dev/urandom | tr -dc A-Za-z0-9 | head -c"${1:-8}"
 }
 
 utils::get_ip() {
@@ -49,7 +49,7 @@ utils::get_ip() {
 }
 
 utils::wait_ip() {
-  dumpstack "$* $VM_IFACE"
+  dumpstack "${VM_IFACE} $*"
   local ip
   while true; do
     ip=$(utils::get_ip "$VM_IFACE")
@@ -82,10 +82,12 @@ utils::replace_line_by_prefix() {
   local tmp
   tmp=$(mktemp -d)
 
+  set +e
   grep -v "$prefix" < "$fname" > "$tmp/grepped"
   echo "${prefix}${content}" | tee -a "$tmp/grepped"
   mv "$tmp/grepped" "$fname"
   rm -rf "$tmp"
+  set -e
 }
 
 utils::docker_subnet() {

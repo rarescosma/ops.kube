@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-set -x
+set -e
 
 DOT=$(cd -P "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
 export DOT
 export TPL=$DOT/templates
 
+# shellcheck source=lib/log.sh
+source "$DOT/lib/log.sh"
 # shellcheck source=env.sh
 source "$DOT/env.sh"
 # shellcheck source=cluster.sh
@@ -30,7 +32,9 @@ source $DOT/lib/provision.sh
 source "${DOT}/lib/vm.${VM_ENGINE}.sh"
 
 start() {
+  dumpstack "$*"
   utils::function_exists "host::prepare" && host::prepare
+
   prepare
   utils::function_exists "vm::prepare" && vm::prepare
   orchestrate
@@ -41,6 +45,7 @@ start() {
 }
 
 stop() {
+  dumpstack "$*"
   utils::function_exists "host::stop" && host::stop
 
   cluster::stop

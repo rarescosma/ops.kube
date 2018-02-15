@@ -3,11 +3,13 @@
 CACHE_DIR="${KUBE_PV}/kube/cache"
 
 prepare() {
+  dumpstack "$*"
   prepare::bin
   prepare::tls
 }
 
 prepare::bin::sync_kube() {
+  dumpstack "$*"
   echo "Checking Kube bins v.${KUBE_VERSION}"
   local target="${CACHE_DIR}/kube_${KUBE_VERSION}" && mkdir -p "$target"
 
@@ -37,18 +39,21 @@ prepare::bin::sync_kube() {
 }
 
 prepare::bin::sync_etcd() {
+  dumpstack "$*"
   echo "Checking Etcd bins v.${ETCD_VERSION}"
   local target="${CACHE_DIR}/etcd_${ETCD_VERSION}" && mkdir -p "$target"
   [ -x "${target}/etcdctl" ] || utils::pull_tgz "$ETCD_TGZ" "$target" etcd
 }
 
 prepare::bin::sync_docker() {
+  dumpstack "$*"
   echo "Checking Docker bins v.${DOCKER_VERSION}"
   local target="${CACHE_DIR}/docker_${DOCKER_VERSION}" && mkdir -p "$target"
   [ -x "${target}/docker" ] || utils::pull_tgz "$DOCKER_TGZ" "$target" docker
 }
 
 prepare::bin() {
+  dumpstack "$*"
   mkdir -p "${CACHE_DIR}"
   mkdir -p "$DOT/.bincache" "$DOT/bin"
   mkdir -p "${KUBE_PV}/kube/bin"
@@ -73,6 +78,7 @@ prepare::bin() {
 }
 
 prepare::tls() {
+  dumpstack "$*"
   mkdir -p "$DOT/etc/tls"
   [ -f "$DOT/etc/tls/kubernetes.pem" ] && return
 

@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
 vm::prepare() {
+  dumpstack "$*"
   vm::update_profile
   lxc image show "$LXD_BASE_IMG" 2>/dev/null || vm::create_base_image "$LXD_BASE_IMG"
 }
 
 vm::update_profile() {
+  dumpstack "$*"
   if ! (lxc profile list | grep "$LXD_PROFILE") >/dev/null; then
     echo "Creating LXC profile ${LXD_PROFILE}"
     lxc profile create "$LXD_PROFILE"
@@ -16,6 +18,7 @@ vm::update_profile() {
 }
 
 vm::create_base_image() {
+  dumpstack "$*"
   local image=${1:-"$LXD_BASE_IMG"}
 
   echo "Creating LXC base image ${image}"
@@ -31,11 +34,17 @@ vm::create_base_image() {
 }
 
 vm::launch() {
+  dumpstack "$*"
   local vm="$1"
-  (lxc launch "$LXD_BASE_IMG" "$vm" --profile "$LXD_PROFILE" || lxc start "$vm")
+  (
+    lxc launch "$LXD_BASE_IMG" "$vm" --profile "$LXD_PROFILE" ||
+    lxc start "$vm" ||
+    true
+  )
 }
 
 vm::discover() {
+  dumpstack "$*"
   local tag="$1"
   local what=${2:-"ids"}
   case $what in
@@ -49,20 +58,24 @@ vm::discover() {
 }
 
 vm::exec() {
+  dumpstack "$*"
   local vm=$1; shift
   lxc exec "$vm" -- /kube/do "$@"
 }
 
 vm::destroy() {
+  dumpstack "$*"
   lxc delete -f "$@"
 }
 
 vm::assert_vm() {
+  dumpstack "$*"
   [[ "lxc" == $(printenv container) ]] || \
   (echo "Error: not in an LXC container" && exit 1)
 }
 
 vm::clean() {
+  dumpstack "$*"
   # Cleanup profile and base image
   lxc profile delete "$LXD_PROFILE"
   lxc image delete "$LXD_BASE_IMG"

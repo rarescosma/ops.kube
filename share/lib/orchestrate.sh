@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 orchestrate::master() {
+  dumpstack "$*"
   local index=${1:-"0"}
   local vm="master${index}"
   local envvar
@@ -16,6 +17,7 @@ orchestrate::master() {
 }
 
 orchestrate::worker() {
+  dumpstack "$*"
   local index=${1:-"0"}
   local vm="worker${index}"
 

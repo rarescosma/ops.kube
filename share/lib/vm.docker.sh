@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
 vm::prepare() {
+  dumpstack "$*"
   vm::run_dns "${DOCKER_BRIDGE}"
 }
 
 vm::run_dns() {
+  dumpstack "$*"
   local interface=${1:-"$DOCKER_BRIDGE"}
   local ip
   ip=$(utils::get_ip "${interface}")
@@ -20,6 +22,7 @@ vm::run_dns() {
 }
 
 vm::launch() {
+  dumpstack "$*"
   local vm="$1"; shift
 
   docker run -d \
@@ -34,6 +37,7 @@ vm::launch() {
 }
 
 vm::discover() {
+  dumpstack "$*"
   local tag="$1"
   local what=${2:-"ids"}
   case $what in
@@ -48,20 +52,24 @@ vm::discover() {
 }
 
 vm::exec() {
+  dumpstack "$*"
   local vm=$1; shift
   docker exec "$vm" /kube/do "$@"
 }
 
 vm::destroy() {
+  dumpstack "$*"
   docker rm -f "$@"
 }
 
 vm::assert_vm() {
+  dumpstack "$*"
   grep docker </proc/1/cgroup &>/dev/null \
   || (echo "Error: not in a Docker container" && exit 1)
 }
 
 vm::clean() {
+  dumpstack "$*"
   # todo - cleanup dns container
   echo "Cleaning docker vm engine..."
   docker rm -f dnsdock

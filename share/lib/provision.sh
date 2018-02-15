@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 provision::master() {
+  dumpstack "$*"
   utils::export_vm
 
   provision::base -skipapt
@@ -12,6 +13,7 @@ provision::master() {
 }
 
 provision::worker() {
+  dumpstack "$*"
   utils::export_vm
 
   provision::base -skipapt
@@ -33,6 +35,7 @@ provision::worker() {
 }
 
 provision::install_docker() {
+  dumpstack "$*"
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
   add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
   apt update
@@ -40,6 +43,7 @@ provision::install_docker() {
 }
 
 provision::base() {
+  dumpstack "$*"
   utils::export_vm
 
   # Check connectivity - DANGER!
@@ -66,6 +70,7 @@ provision::base() {
 }
 
 provision::setup_units() {
+  dumpstack "$*"
   for unit in "$@"; do
     utils::template "${TPL}/unit_${unit}" > "/etc/systemd/system/${unit}.service"
   done

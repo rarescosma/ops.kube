@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 cluster::stop() {
+  dumpstack "$*"
   for mid in $(vm::discover master); do
     vm::exec "${mid}" "halt" &
   done
@@ -13,14 +14,16 @@ cluster::stop() {
 }
 
 cluster::stop_worker() {
+  dumpstack "$*"
   vm::assert_vm
 
   systemctl stop kubelet || systemctl stop kubelet_single
-  docker rm -f "$(docker ps -a -q)"
+  docker rm -f "$(docker ps -a -q)" 2>/dev/null || true
   halt
 }
 
 cluster::configure() {
+  dumpstack "$*"
   # Source cluster.sh again to capture MASTER0_IP
   # shellcheck source=/dev/null
   source "${DOT}/cluster.sh"
@@ -41,6 +44,7 @@ cluster::configure() {
 }
 
 cluster::clean() {
+  dumpstack "$*"
   vm::destroy "$(vm::discover master)"
   vm::destroy "$(vm::discover worker)"
   cp -f "${DOT}/cluster.sh.empty" "${DOT}/cluster.sh"

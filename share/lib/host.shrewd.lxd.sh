@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 host::prepare() {
+  dumpstack "$*"
   # restart lxd and wait for it
   sudo killall dnsmasq
   sudo systemctl restart lxd
@@ -11,10 +12,12 @@ host::prepare() {
 }
 
 host::post() {
+  dumpstack "$*"
   host::resolvconf::start
 }
 
 host::resolvconf::start() {
+  dumpstack "$*"
   sudo chattr -i /etc/resolv.conf
   cat << __EOF__ | sudo tee /etc/resolv.conf
 search svc.kubernetes.local
@@ -25,10 +28,12 @@ __EOF__
 }
 
 host::stop() {
+  dumpstack "$*"
   host::resolvconf::stop
 }
 
 host::resolvconf::stop() {
+  dumpstack "$*"
   sudo chattr -i /etc/resolv.conf
   cat << __EOF__ | sudo tee /etc/resolv.conf
 search lan

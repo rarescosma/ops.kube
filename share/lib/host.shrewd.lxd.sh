@@ -10,11 +10,9 @@ host::prepare() {
   done
 }
 
-# host::post() {
-#   sleep 1
-#   xmodmap ~/.Xmodmap
-#   host::resolvconf::start
-# }
+host::post() {
+  host::resolvconf::start
+}
 
 host::resolvconf::start() {
   sudo chattr -i /etc/resolv.conf

@@ -4,7 +4,7 @@ Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
 ExecStart=/usr/bin/kube-apiserver \
-  --admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota \
+  --admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota,PodPreset \
   --advertise-address=${VM_IP} \
   --allow-privileged=true \
   --apiserver-count=2 \
@@ -15,14 +15,15 @@ ExecStart=/usr/bin/kube-apiserver \
   --etcd-cafile=/kube/etc/tls/ca.pem \
   --insecure-bind-address=0.0.0.0 \
   --kubelet-certificate-authority=/kube/etc/tls/ca.pem \
-  --etcd-servers=https://${MASTER0_IP}:2379,https://${MASTER1_IP}:2379 \
+  --etcd-servers=https://${MASTER0_IP}:2379 \
   --service-account-key-file=/kube/etc/tls/kubernetes-key.pem \
   --service-cluster-ip-range=${KUBE_SERVICE_CLUSTER_IP_RANGE} \
   --service-node-port-range=30000-32767 \
   --tls-cert-file=/kube/etc/tls/kubernetes.pem \
   --tls-private-key-file=/kube/etc/tls/kubernetes-key.pem \
   --token-auth-file=/kube/etc/auth/token.csv \
-  --v=2
+  --v=2 \
+  --runtime-config=settings.k8s.io/v1alpha1
 Restart=on-failure
 RestartSec=5
 

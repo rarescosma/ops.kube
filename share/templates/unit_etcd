@@ -15,7 +15,7 @@ ExecStart=/usr/bin/etcd --name ${VM_HOSTNAME} \
   --listen-client-urls https://${VM_IP}:2379,http://127.0.0.1:2379 \
   --advertise-client-urls https://${VM_IP}:2379 \
   --initial-cluster-token etcd-cluster-0 \
-  --initial-cluster master0=https://${MASTER0_IP}:2380,master1=https://${MASTER1_IP}:2380 \
+  --initial-cluster master0=https://${MASTER0_IP}:2380 \
   --initial-cluster-state new \
   --data-dir=/var/lib/etcd
 Restart=on-failure

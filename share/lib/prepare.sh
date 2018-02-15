@@ -15,7 +15,8 @@ prepare::bin::sync_kube() {
 
   if [ ! -x "${target}/kubectl" ]; then
     local tmp
-    tmp=$(mktemp -d)
+    tmp="$KUBE_PV/tmp"
+    mkdir -p "$tmp"
     local release_dir="${tmp}/kubernetes/server/kubernetes/server/bin"
     local bin
 

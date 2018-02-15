@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CACHE_DIR="${KUBE_PV}/cache"
+CACHE_DIR="${KUBE_PV}/kube/cache"
 
 prepare() {
   prepare::bin
@@ -21,13 +21,13 @@ prepare::bin::sync_kube() {
     tar -C "$tmp" -xf "${tmp}/archive.tgz"
 
     # 1.5.4 compatibility - need an extra step to pull kube binaries
-    pushd "${tmp}/kubernetes/cluster"
+    cd "${tmp}/kubernetes/cluster" || exit
     KUBERNETES_SKIP_CONFIRM=1 ./get-kube-binaries.sh
-    popd
+    cd - || exit
 
-    pushd "${tmp}/kubernetes/server"
+    cd "${tmp}/kubernetes/server" || exit
     tar xzf kubernetes-server-linux-amd64.tar.gz
-    popd
+    cd - || exit
 
     for bin in "${KUBE_BINS[@]}"; do
       target="${CACHE_DIR}/kube_${KUBE_VERSION}/${bin}"
@@ -61,13 +61,13 @@ prepare::bin() {
   wait
 
   echo "Creating symlinks"
-  pushd "${KUBE_PV}/bin"
+  cd "${KUBE_PV}/kube/bin" || exit
   ln -sf "../cache/kube_${KUBE_VERSION}/"* .
   ln -sf "../cache/etcd_${ETCD_VERSION}/"* .
   if [ -z "${USE_SYSTEM_DOCKER+x}" ]; then
     ln -sf "../cache/docker_${DOCKER_VERSION}/"* .
   fi
-  popd
+  cd - || exit
 
   chmod -R +x "${CACHE_DIR}"
 }
@@ -76,7 +76,7 @@ prepare::tls() {
   mkdir -p "$DOT/etc/tls"
   [ -f "$DOT/etc/tls/kubernetes.pem" ] && return
 
-  pushd "$DOT/etc/tls"
+  cd "$DOT/etc/tls" || exit
   cfssl gencert -initca "$TPL/tls_ca-csr.json" | cfssljson -bare ca
 
   cfssl gencert \
@@ -85,5 +85,5 @@ prepare::tls() {
     -config="$TPL/tls_ca-config.json" \
     -profile=kubernetes \
     "$TPL/tls_kube-csr.json" | cfssljson -bare kubernetes
-  popd
+  cd - || exit
 }

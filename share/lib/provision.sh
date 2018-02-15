@@ -56,6 +56,11 @@ provision::base() {
   local rc="/root/.bashrc"
   grep -q -F '##kube' "$rc" || cat "$DOT/templates/bashrc" >> "$rc"
 
+  # Public DNS
+  chmod +w /etc/resolv.conf
+  echo "nameserver 8.8.8.8" > /etc/resolv.conf
+  chmod -w /etc/resolv.conf
+
   # Link binaries
   ln -sf "/pv/kube/bin/"* /usr/bin/
 }

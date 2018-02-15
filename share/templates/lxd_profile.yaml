@@ -19,7 +19,7 @@ devices:
     type: disk
   pvdir:
     path: /pv/kube
-    source: ${KUBE_PV}
+    source: ${KUBE_PV}/kube
     type: disk
   tuntap:
     path: /dev/net/tun

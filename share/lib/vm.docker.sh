@@ -29,7 +29,7 @@ vm::launch() {
   --cap-add=SYS_ADMIN \
   --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro \
   -v "${DOT}:/kube" \
-  -v "${KUBE_PV}:/pv/kube" \
+  -v "${KUBE_PV}/kube:/pv/kube" \
   "${DOCKER_BASE_IMG}" /sbin/init || docker start "${vm}"
 }
 

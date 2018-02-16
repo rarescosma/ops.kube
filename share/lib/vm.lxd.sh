@@ -65,7 +65,7 @@ vm::exec() {
 
 vm::destroy() {
   dumpstack "$*"
-  lxc delete -f "$@"
+  lxc delete -f "$@" || true
 }
 
 vm::assert_vm() {
@@ -76,6 +76,6 @@ vm::assert_vm() {
 vm::clean() {
   dumpstack "$*"
   # Cleanup profile and base image
-  lxc profile delete "$LXD_PROFILE"
-  lxc image delete "$LXD_BASE_IMG"
+  lxc profile delete "$LXD_PROFILE" || true
+  lxc image delete "$LXD_BASE_IMG" || true
 }

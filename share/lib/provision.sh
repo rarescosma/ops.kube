@@ -9,8 +9,13 @@ provision::master() {
   utils::template "$TPL/auth_token.csv" > /kube/etc/auth/token.csv
   cp -f "$TPL/auth_policy.jsonl" /kube/etc/auth/policy.jsonl
 
-  provision::resolv_conf
+  local dns_servers
+  dns_servers="8.8.8.8"
+  if [[ "$VM_ENGINE" == "lxd" ]]; then
+    dns_servers="$(ip route | grep default | cut -d" " -f3) 8.8.8.8"
+  fi
 
+  provision::resolv_conf ${dns_servers}
   provision::setup_units ${MASTER_UNITS}
 }
 
@@ -31,8 +36,13 @@ provision::worker() {
 
   utils::template "$TPL/kubelet_kubeconfig" > /kube/etc/kubelet/kubeconfig
 
-  provision::resolv_conf
+  local dns_servers
+  dns_servers="8.8.8.8"
+  if [[ "$VM_ENGINE" == "lxd" ]]; then
+    dns_servers="8.8.8.8 $(ip route | grep default | cut -d" " -f3)"
+  fi
 
+  provision::resolv_conf ${dns_servers}
   provision::setup_units ${WORKER_UNITS}
 }
 
@@ -53,21 +63,14 @@ provision::base() {
 
   if [[ "$1" != "-skipapt" ]]; then
     # Update/upgrade + essentials
-    sed -ie 's/archive.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
-    sed -ie 's/security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
     apt update
     apt -y full-upgrade
-    apt -y install curl wget iptables software-properties-common
+    apt -y install curl wget iptables software-properties-common ncdu htop socat
   fi
 
   # Profile / aliases / etc.
   local rc="/root/.bashrc"
   grep -q -F '##kube' "$rc" || cat "$DOT/templates/bashrc" >> "$rc"
-
-  # Public DNS
-  chmod +w /etc/resolv.conf
-  echo "nameserver 8.8.8.8" > /etc/resolv.conf
-  chmod -w /etc/resolv.conf
 
   # Link binaries
   ln -sf "/pv/kube/bin/"* /usr/bin/
@@ -89,12 +92,12 @@ provision::setup_units() {
 
 provision::resolv_conf() {
   dumpstack "$*"
-  chmod +w /etc/resolv.conf
-  echo > /etc/resolv.conf
-  echo "nameserver 8.8.8.8" >> /etc/resolv.conf
-  if [[ "$VM_ENGINE" == "lxd" ]]; then
-    BRIDGE_IP=$(ip route | grep default | cut -d" " -f3)
-    echo "nameserver $BRIDGE_IP" >> /etc/resolv.conf
-  fi
-  chmod -w /etc/resolv.conf
+  local server rc
+  rc="/etc/resolv.conf"
+
+  rm -f "$rc" && touch "$rc"
+  for server in $*; do
+    echo "nameserver $server" >> "$rc"
+  done
+  chmod -w "$rc"
 }

@@ -3,7 +3,7 @@
 host::prepare() {
   dumpstack "$*"
   # restart lxd and wait for it
-  sudo killall dnsmasq
+  sudo killall dnsmasq || true
   sudo systemctl restart lxd
   while true; do
     lxc list 1>/dev/null && break
@@ -23,6 +23,7 @@ host::resolvconf::start() {
 search svc.kubernetes.local
 nameserver 10.32.0.10
 nameserver 10.0.40.65
+nameserver 10.10.10.10
 __EOF__
   sudo chattr +i /etc/resolv.conf
 }

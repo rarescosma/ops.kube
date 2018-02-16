@@ -9,6 +9,8 @@ provision::master() {
   utils::template "$TPL/auth_token.csv" > /kube/etc/auth/token.csv
   cp -f "$TPL/auth_policy.jsonl" /kube/etc/auth/policy.jsonl
 
+  provision::resolv_conf
+
   provision::setup_units ${MASTER_UNITS}
 }
 
@@ -28,8 +30,8 @@ provision::worker() {
   export POD_BIP
 
   utils::template "$TPL/kubelet_kubeconfig" > /kube/etc/kubelet/kubeconfig
-  echo "nameserver 8.8.8.8" > /etc/resolv.conf
-  chmod -w /etc/resolv.conf
+
+  provision::resolv_conf
 
   provision::setup_units ${WORKER_UNITS}
 }
@@ -83,4 +85,16 @@ provision::setup_units() {
     systemctl enable "$unit"
     systemctl restart "$unit" || systemctl start "$unit"
   done
+}
+
+provision::resolv_conf() {
+  dumpstack "$*"
+  chmod +w /etc/resolv.conf
+  echo > /etc/resolv.conf
+  echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+  if [[ "$VM_ENGINE" == "lxd" ]]; then
+    BRIDGE_IP=$(ip route | grep default | cut -d" " -f3)
+    echo "nameserver $BRIDGE_IP" >> /etc/resolv.conf
+  fi
+  chmod -w /etc/resolv.conf
 }

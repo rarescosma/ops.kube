@@ -33,19 +33,16 @@ spec:
         k8s-app: kube-dns
         version: v19
         kubernetes.io/cluster-service: "true"
-      annotations:
-        scheduler.alpha.kubernetes.io/critical-pod: ''
-        scheduler.alpha.kubernetes.io/tolerations: '[{"key":"CriticalAddonsOnly", "operator":"Exists"}]'
     spec:
       containers:
       - name: kubedns
-        image: localhost:5000/kube/addons/dns/kubedns:1.8
+        image: gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.5
         livenessProbe:
           httpGet:
-            path: /healthz
-            port: 8080
+            path: /healthcheck/kubedns
+            port: 10054
             scheme: HTTP
-          initialDelaySeconds: 60
+          initialDelaySeconds: 30
           timeoutSeconds: 5
           successThreshold: 1
           failureThreshold: 5
@@ -54,14 +51,11 @@ spec:
             path: /readiness
             port: 8081
             scheme: HTTP
-          # we poll on pod startup for the Kubernetes master service and
-          # only setup the /readiness HTTP server once that's available.
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
         args:
         # command = "/kube-dns"
         - --domain=kubernetes.local
         - --dns-port=10053
+        - --v=2
         ports:
         - containerPort: 10053
           name: dns-local
@@ -70,8 +64,13 @@ spec:
           name: dns-tcp-local
           protocol: TCP
       - name: dnsmasq
-        image: localhost:5000/kube/addons/dns/dnsmasq:1.4
+        image: gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.5
         args:
+        - -v=2
+        - -logtostderr
+        - -restartDnsmasq=true
+        - --
+        - -k
         - --cache-size=1000
         - --no-resolv
         - --server=127.0.0.1#10053
@@ -83,7 +82,7 @@ spec:
           name: dns-tcp
           protocol: TCP
       - name: healthz
-        image: localhost:5000/kube/addons/dns/healthz:1.2
+        image: gcr.io/google_containers/exechealthz:1.2
         args:
         - -cmd=nslookup kubernetes.default.svc.kubernetes.local 127.0.0.1 >/dev/null && nslookup kubernetes.default.svc.kubernetes.local 127.0.0.1:10053 >/dev/null
         - -port=8080

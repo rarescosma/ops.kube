@@ -3,7 +3,7 @@
 host::prepare() {
   dumpstack "$*"
   # restart lxd and wait for it
-  sudo killall dnsmasq
+  sudo killall dnsmasq || true
   sudo systemctl restart lxd
   while true; do
     lxc list 1>/dev/null && break

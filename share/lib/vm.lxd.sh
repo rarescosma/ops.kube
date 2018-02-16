@@ -69,7 +69,6 @@ vm::destroy() {
 }
 
 vm::assert_vm() {
-  dumpstack "$*"
   [[ "lxc" == $(printenv container) ]] || \
   (echo "Error: not in an LXC container" && exit 1)
 }

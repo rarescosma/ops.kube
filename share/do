@@ -7,6 +7,7 @@ export DOT
 export TPL=$DOT/templates
 
 # shellcheck source=lib/log.sh
+export VM_HOST=$(hostname -s)
 source "$DOT/lib/log.sh"
 # shellcheck source=env.sh
 source "$DOT/env.sh"

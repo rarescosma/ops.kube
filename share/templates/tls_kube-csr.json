@@ -65,7 +65,7 @@
     "${CLUSTER}-worker61",
     "${CLUSTER}-worker62",
     "${CLUSTER}-worker63",
-    "10.32.0.1",
+    "${KUBE_SERVICE_CLUSTER_IP}",
     "10.0.40.1",
     "10.0.40.2",
     "10.0.40.3",

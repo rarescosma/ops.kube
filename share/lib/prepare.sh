@@ -86,9 +86,10 @@ prepare::tls() {
 
   [ -f "$tls_dir/kubernetes.pem" ] && return
 
+  export KUBE_SERVICE_CLUSTER_IP="$(utils::service_ip "$KUBE_SERVICE_CLUSTER_IP_RANGE")"
+
   cd "$tls_dir" || exit
   cfssl gencert -initca "$TPL/tls_ca-csr.json" | cfssljson -bare ca
-
 
   envsubst <"${TPL}/tls_kube-csr.json" >"${tls_dir}/tls_kube-csr.json"
 

@@ -95,6 +95,11 @@ utils::docker_subnet() {
   echo "10.$(echo "$worker_ip" | cut -d. -f4).0.0/16"
 }
 
+utils::service_ip() {
+  local service_subnet="$1"
+  echo "$service_subnet" | sed -r 's/(.*)\.[[:digit:]]+\/[[:digit:]]+/\1.1/'
+}
+
 utils::function_exists() {
   [ -n "$(type -t "$1")" ] && [ "$(type -t "$1")" = function ]
 }

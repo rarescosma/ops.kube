@@ -2,8 +2,8 @@
 /ingress
 /share/.*
 /share/bin/
-/share/env.sh
-/share/cluster.sh
+/share/*env.sh
+/share/*cluster.sh
 /share/etc/*
 /addons/cluster-insight
 /bin/kubectl

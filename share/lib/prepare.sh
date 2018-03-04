@@ -80,17 +80,24 @@ prepare::bin() {
 
 prepare::tls() {
   dumpstack "$*"
-  mkdir -p "$DOT/etc/tls"
-  [ -f "$DOT/etc/tls/kubernetes.pem" ] && return
+  local tls_dir
+  tls_dir="$DOT/etc/tls/$CLUSTER"
+  mkdir -p "$tls_dir"
 
-  cd "$DOT/etc/tls" || exit
+  [ -f "$tls_dir/kubernetes.pem" ] && return
+
+  cd "$tls_dir" || exit
   cfssl gencert -initca "$TPL/tls_ca-csr.json" | cfssljson -bare ca
+
+
+  envsubst <"${TPL}/tls_kube-csr.json" >"${tls_dir}/tls_kube-csr.json"
 
   cfssl gencert \
     -ca=ca.pem \
     -ca-key=ca-key.pem \
     -config="$TPL/tls_ca-config.json" \
     -profile=kubernetes \
-    "$TPL/tls_kube-csr.json" | cfssljson -bare kubernetes
+    "${tls_dir}/tls_kube-csr.json" | cfssljson -bare kubernetes
+
   cd - || exit
 }

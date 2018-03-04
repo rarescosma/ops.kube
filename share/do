@@ -6,13 +6,16 @@ DOT=$(cd -P "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
 export DOT
 export TPL=$DOT/templates
 
+if [ ! -z "$1" ] && [ -z "$CLUSTER" ]; then
+  export CLUSTER="$1"
+  shift
+fi
+
 # shellcheck source=lib/log.sh
 export VM_HOST=$(hostname -s)
 source "$DOT/lib/log.sh"
-# shellcheck source=env.sh
-source "$DOT/env.sh"
-# shellcheck source=cluster.sh
-source "$DOT/cluster.sh"
+source "$DOT/$CLUSTER-env.sh"
+source "$DOT/$CLUSTER-cluster.sh" || true
 # shellcheck source=lib/utils.sh
 source "$DOT/lib/utils.sh"
 # shellcheck source=lib/cluster.sh
@@ -22,13 +25,13 @@ if test -f "${DOT}/lib/host.${KUBE_HOST}.sh"; then
   source "${DOT}/lib/host.${KUBE_HOST}.sh"
 fi
 # shellcheck source=lib/network.sh
-source $DOT/lib/network.sh
+source "$DOT/lib/network.sh"
 # shellcheck source=lib/orchestrate.sh
-source $DOT/lib/orchestrate.sh
+source "$DOT/lib/orchestrate.sh"
 # shellcheck source=lib/prepare.sh
-source $DOT/lib/prepare.sh
+source "$DOT/lib/prepare.sh"
 # shellcheck source=lib/provision.sh
-source $DOT/lib/provision.sh
+source "$DOT/lib/provision.sh"
 # shellcheck source=/dev/null
 source "${DOT}/lib/vm.${VM_ENGINE}.sh"
 
@@ -41,8 +44,6 @@ start() {
   orchestrate
 
   network::cycle
-
-  utils::function_exists "host::post" && host::post
 }
 
 stop() {
@@ -58,7 +59,7 @@ clean() {
 
   # Clean prepare stage
   rm -rf "${DOT:?}/bin/*"
-  rm -rf "$DOT/etc/tls/*"
+  rm -rf "$DOT/etc/tls/$CLUSTER"
 
   cluster::clean
   utils::function_exists "vm::clean" && vm::clean
@@ -73,7 +74,4 @@ orchestrate() {
   wait
 }
 
-# Verbatim, yeah!
-if [[ "-lib" != "$1" ]]; then
-  "$@"
-fi
+"$@"

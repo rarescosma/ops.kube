@@ -3,15 +3,15 @@
 orchestrate::master() {
   dumpstack "$*"
   local index=${1:-"0"}
-  local vm="master${index}"
+  local vm="${CLUSTER}-master${index}"
   local envvar
-  envvar=$(utils::to_upper "${vm}_ip")
+  envvar=$(utils::to_upper "master${index}_ip")
   local ip
 
   vm::launch "$vm"
   ip=$(vm::exec "$vm" utils::wait_ip)
 
-  utils::replace_line_by_prefix "$DOT/cluster.sh" "$envvar" "=\"${ip}\""
+  utils::replace_line_by_prefix "${DOT}/${CLUSTER}-cluster.sh" "$envvar" "=\"${ip}\""
 
   vm::exec "$vm" provision::master
 }
@@ -19,7 +19,7 @@ orchestrate::master() {
 orchestrate::worker() {
   dumpstack "$*"
   local index=${1:-"0"}
-  local vm="worker${index}"
+  local vm="${CLUSTER}-worker${index}"
 
   vm::launch "$vm"
   vm::exec "$vm" provision::worker

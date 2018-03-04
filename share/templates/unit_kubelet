@@ -15,8 +15,8 @@ ExecStart=/usr/bin/kubelet \
   --container-runtime=docker \
   --docker=unix:///var/run/docker.sock \
   --kubeconfig=/kube/etc/kubelet/kubeconfig \
-  --tls-cert-file=/kube/etc/tls/kubernetes.pem \
-  --tls-private-key-file=/kube/etc/tls/kubernetes-key.pem \
+  --tls-cert-file=/kube/etc/tls/${CLUSTER}/kubernetes.pem \
+  --tls-private-key-file=/kube/etc/tls/${CLUSTER}/kubernetes-key.pem \
   --fail-swap-on=false
 
 Restart=on-failure

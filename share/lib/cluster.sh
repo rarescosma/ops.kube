@@ -26,26 +26,26 @@ cluster::configure() {
   dumpstack "$*"
   # Source cluster.sh again to capture MASTER0_IP
   # shellcheck source=/dev/null
-  source "${DOT}/cluster.sh"
+  source "${DOT}/${CLUSTER}-cluster.sh"
   local kc='kubectl config'
 
-  $kc set-cluster "${CLUSTER_NAME}" \
-  --certificate-authority="${DOT}/etc/tls/ca.pem" \
+  $kc set-cluster "${CLUSTER}" \
+  --certificate-authority="${DOT}/etc/tls/${CLUSTER}/ca.pem" \
   --embed-certs=true \
   --server="https://${MASTER0_IP}:6443"
 
-  $kc set-credentials "${CLUSTER_NAME}-root" --token "${SECRET_TOKEN}"
+  $kc set-credentials "${CLUSTER}-root" --token "${SECRET_TOKEN}"
 
-  $kc set-context "${CLUSTER_NAME}" \
-  --cluster="${CLUSTER_NAME}" \
-  --user="${CLUSTER_NAME}-root"
+  $kc set-context "${CLUSTER}" \
+  --cluster="${CLUSTER}" \
+  --user="${CLUSTER}-root"
 
-  $kc use-context "${CLUSTER_NAME}"
+  $kc use-context "${CLUSTER}"
 }
 
 cluster::clean() {
   dumpstack "$*"
   vm::destroy "$(vm::discover master)"
   vm::destroy "$(vm::discover worker)"
-  cp -f "${DOT}/cluster.sh.empty" "${DOT}/cluster.sh"
+  cp -f "${DOT}/cluster.sh.empty" "${DOT}/${CLUSTER}-cluster.sh"
 }

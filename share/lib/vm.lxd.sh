@@ -45,7 +45,7 @@ vm::launch() {
 
 vm::discover() {
   dumpstack "$*"
-  local tag="$1"
+  local tag="${CLUSTER}-${1}"
   local what=${2:-"ids"}
   case $what in
   "ips")
@@ -60,7 +60,7 @@ vm::discover() {
 vm::exec() {
   dumpstack "$*"
   local vm=$1; shift
-  lxc exec "$vm" -- /kube/do "$@"
+  lxc exec "$vm" -- /kube/do "${CLUSTER}" "$@"
 }
 
 vm::destroy() {

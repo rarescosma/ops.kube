@@ -4,18 +4,18 @@ Documentation=https://github.com/coreos
 
 [Service]
 ExecStart=/usr/bin/etcd --name ${VM_HOSTNAME} \
-  --cert-file=/kube/etc/tls/kubernetes.pem \
-  --key-file=/kube/etc/tls/kubernetes-key.pem \
-  --peer-cert-file=/kube/etc/tls/kubernetes.pem \
-  --peer-key-file=/kube/etc/tls/kubernetes-key.pem \
-  --trusted-ca-file=/kube/etc/tls/ca.pem \
-  --peer-trusted-ca-file=/kube/etc/tls/ca.pem \
+  --cert-file=/kube/etc/tls/${CLUSTER}/kubernetes.pem \
+  --key-file=/kube/etc/tls/${CLUSTER}/kubernetes-key.pem \
+  --peer-cert-file=/kube/etc/tls/${CLUSTER}/kubernetes.pem \
+  --peer-key-file=/kube/etc/tls/${CLUSTER}/kubernetes-key.pem \
+  --trusted-ca-file=/kube/etc/tls/${CLUSTER}/ca.pem \
+  --peer-trusted-ca-file=/kube/etc/tls/${CLUSTER}/ca.pem \
   --initial-advertise-peer-urls https://${VM_IP}:2380 \
   --listen-peer-urls https://${VM_IP}:2380 \
   --listen-client-urls https://${VM_IP}:2379,http://127.0.0.1:2379 \
   --advertise-client-urls https://${VM_IP}:2379 \
   --initial-cluster-token etcd-cluster-0 \
-  --initial-cluster master0=https://${MASTER0_IP}:2380 \
+  --initial-cluster ${CLUSTER}-master0=https://${MASTER0_IP}:2380 \
   --initial-cluster-state new \
   --data-dir=/var/lib/etcd
 Restart=on-failure

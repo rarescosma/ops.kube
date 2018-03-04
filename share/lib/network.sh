@@ -43,8 +43,8 @@ network::start() {
 network::stop() {
   dumpstack "$*"
   for subnet in $(seq 1 255); do
-    sudo ip route del -net "10.${subnet}.0.0/16" &>/dev/null || true &
+    sudo ip route del "10.${subnet}.0.0/16" &>/dev/null || true &
   done
   wait
-  sudo ip route del -net "$KUBE_SERVICE_CLUSTER_IP_RANGE" &>/dev/null || true
+  sudo ip route del "$KUBE_SERVICE_CLUSTER_IP_RANGE" &>/dev/null || true
 }

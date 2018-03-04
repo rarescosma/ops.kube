@@ -14,8 +14,12 @@ fi
 # shellcheck source=lib/log.sh
 export VM_HOST=$(hostname -s)
 source "$DOT/lib/log.sh"
-source "$DOT/$CLUSTER-env.sh"
-source "$DOT/$CLUSTER-cluster.sh" || true
+source "$DOT/$CLUSTER-env.sh" 2>/dev/null || {
+  echo "Unkown cluster: $CLUSTER"
+  exit 1
+}
+
+source "$DOT/$CLUSTER-cluster.sh" 2>/dev/null || true
 # shellcheck source=lib/utils.sh
 source "$DOT/lib/utils.sh"
 # shellcheck source=lib/cluster.sh

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-host::prepare() {
+host::restart_lxd() {
   dumpstack "$*"
   # restart lxd and wait for it
   sudo killall dnsmasq || true

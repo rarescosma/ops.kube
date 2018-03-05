@@ -47,15 +47,15 @@ start() {
   utils::function_exists "vm::prepare" && vm::prepare
   orchestrate
 
-  network::cycle
+  network::start
 }
 
 stop() {
   dumpstack "$*"
   utils::function_exists "host::stop" && host::stop
 
-  cluster::stop
   network::stop
+  cluster::stop
 }
 
 clean() {

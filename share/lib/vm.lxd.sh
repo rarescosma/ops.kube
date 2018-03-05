@@ -45,14 +45,20 @@ vm::launch() {
 
 vm::discover() {
   dumpstack "$*"
-  local tag="${CLUSTER}-${1}"
-  local what=${2:-"ids"}
+  local tag what nodes
+  tag="${1}-${2}"
+  what=${3:-"ids"}
+
+  nodes=$(lxc list -c n | grep -- "${tag}" | cut -d" " -f2)
+
   case $what in
   "ips")
-    lxc list -c 4 "${tag}" | grep "${VM_IFACE}" | cut -d" " -f2
+    echo "$nodes" | \
+      xargs -I{} lxc list -c 4 -- {} | \
+      grep -- "${VM_IFACE}" | cut -d" " -f2
     ;;
   *)
-    lxc list -c n "${tag}" | grep "${tag}" | cut -d" " -f2
+    echo "$nodes"
     ;;
   esac
 }

@@ -29,14 +29,17 @@ network::start() {
   local docker_subnet
 
   # Find all worker IPs
-  for worker_ip in $(vm::discover worker ips); do
+  for worker_ip in $(vm::discover '' worker ips); do
     docker_subnet=$(utils::docker_subnet "$worker_ip")
     sudo ip route del "$docker_subnet" &>/dev/null || true
     sudo ip route add "$docker_subnet" via "$worker_ip"
+  done
 
-    # Proxy services thru all workers
+  for our_worker_ip in $(vm::discover "$CLUSTER" worker ips); do
+    # Proxy services through the first worker
     sudo ip route del "$KUBE_SERVICE_CLUSTER_IP_RANGE" &>/dev/null || true
-    sudo ip route add "$KUBE_SERVICE_CLUSTER_IP_RANGE" via "$worker_ip"
+    sudo ip route add "$KUBE_SERVICE_CLUSTER_IP_RANGE" via "$our_worker_ip"
+    break
   done
 }
 

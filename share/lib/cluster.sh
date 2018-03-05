@@ -2,11 +2,11 @@
 
 cluster::stop() {
   dumpstack "$*"
-  for mid in $(vm::discover master); do
+  for mid in $(vm::discover "$CLUSTER" master); do
     vm::exec "${mid}" "halt" &
   done
 
-  for wid in  $(vm::discover worker); do
+  for wid in  $(vm::discover "$CLUSTER" worker); do
     vm::exec "${wid}" cluster::stop_worker &
   done
 
@@ -45,7 +45,7 @@ cluster::configure() {
 
 cluster::clean() {
   dumpstack "$*"
-  vm::destroy "$(vm::discover master)"
-  vm::destroy "$(vm::discover worker)"
+  vm::destroy "$(vm::discover "$CLUSTER" master)"
+  vm::destroy "$(vm::discover "$CLUSTER" worker)"
   cp -f "${DOT}/cluster.sh.empty" "${DOT}/${CLUSTER}-cluster.sh"
 }

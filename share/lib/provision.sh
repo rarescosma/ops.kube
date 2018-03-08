@@ -34,7 +34,7 @@ provision::worker() {
   POD_BIP=${POD_CIDR//0.0/0.1}
   export POD_BIP
 
-  utils::template "$TPL/kubelet_kubeconfig" > /kube/etc/kubelet/kubeconfig
+  utils::template "$TPL/kubeconfig_kubelet" > /kube/etc/kubelet/kubeconfig
 
   local dns_servers
   dns_servers="8.8.8.8"

@@ -3,17 +3,23 @@
 host::restart_lxd() {
   dumpstack "$*"
   # restart lxd and wait for it
-  sudo killall dnsmasq || true
-  sudo systemctl restart lxd
-  while true; do
-    lxc list 1>/dev/null && break
-    sleep 1
-  done
+  sudo systemctl is-active --quiet lxd || {
+    sudo killall dnsmasq || true
+    sudo systemctl restart lxd
+    while true; do
+      lxc list 1>/dev/null && break
+      sleep 1
+    done
+  }
+}
+
+host::prepare() {
+  dumpstack "$*"
+  host::restart_lxd
 }
 
 host::post() {
   dumpstack "$*"
-  host::resolvconf::start
 }
 
 host::resolvconf::start() {

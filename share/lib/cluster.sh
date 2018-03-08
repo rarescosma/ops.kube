@@ -24,9 +24,19 @@ cluster::stop_worker() {
 
 cluster::configure() {
   dumpstack "$*"
-  # Source cluster.sh again to capture MASTER0_IP
+
   # shellcheck source=/dev/null
   source "${DOT}/${CLUSTER}-cluster.sh"
+
+  utils::template "$TPL/kubeconfig_admin" > "$HOME/.kube/$CLUSTER"
+}
+
+cluster::configure_secure() {
+  dumpstack "$*"
+
+  # shellcheck source=/dev/null
+  source "${DOT}/${CLUSTER}-cluster.sh"
+
   local kc='kubectl config'
 
   $kc set-cluster "${CLUSTER}" \

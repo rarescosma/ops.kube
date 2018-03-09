@@ -85,3 +85,14 @@ vm::clean() {
   lxc profile delete "$LXD_PROFILE" || true
   lxc image delete "$LXD_BASE_IMG" || true
 }
+
+vm::restart_daemon() {
+  dumpstack "$*"
+  # restart lxd and wait for it
+  sudo killall dnsmasq || true
+  sudo systemctl restart lxd
+  while true; do
+    lxc list 1>/dev/null && break
+    sleep 1
+  done
+}

@@ -11,33 +11,38 @@ if [ ! -z "$1" ] && [ -z "$CLUSTER" ]; then
   shift
 fi
 
-# shellcheck source=lib/log.sh
 export VM_HOST=$(hostname -s)
+
+# shellcheck source=/dev/null
 source "$DOT/lib/log.sh"
+# shellcheck source=/dev/null
 source "$DOT/$CLUSTER-env.sh" 2>/dev/null || {
   echo "Unkown cluster: $CLUSTER"
   exit 1
 }
 
+# shellcheck source=/dev/null
 source "$DOT/$CLUSTER-cluster.sh" 2>/dev/null || true
-# shellcheck source=lib/utils.sh
+# shellcheck source=/dev/null
 source "$DOT/lib/utils.sh"
-# shellcheck source=lib/cluster.sh
+# shellcheck source=/dev/null
 source "$DOT/lib/cluster.sh"
 # shellcheck source=/dev/null
 if test -f "${DOT}/lib/host.${KUBE_HOST}.sh"; then
   source "${DOT}/lib/host.${KUBE_HOST}.sh"
 fi
-# shellcheck source=lib/network.sh
+# shellcheck source=/dev/null
 source "$DOT/lib/network.sh"
-# shellcheck source=lib/orchestrate.sh
+# shellcheck source=/dev/null
 source "$DOT/lib/orchestrate.sh"
-# shellcheck source=lib/prepare.sh
+# shellcheck source=/dev/null
 source "$DOT/lib/prepare.sh"
-# shellcheck source=lib/provision.sh
+# shellcheck source=/dev/null
 source "$DOT/lib/provision.sh"
 # shellcheck source=/dev/null
 source "${DOT}/lib/vm.${VM_ENGINE}.sh"
+# shellcheck source=/dev/null
+source "${DOT}/lib/addons.sh"
 
 start() {
   dumpstack "$*"
@@ -66,7 +71,7 @@ clean() {
   rm -rf "$DOT/etc/tls/$CLUSTER"
 
   cluster::clean
-  utils::function_exists "vm::clean" && vm::clean
+  # utils::function_exists "vm::clean" && vm::clean
 }
 
 orchestrate() {

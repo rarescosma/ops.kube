@@ -80,6 +80,7 @@ provision::setup_units() {
   dumpstack "$*"
 
   export KUBE_SERVICE_CLUSTER_IP="$(utils::service_ip "$KUBE_SERVICE_CLUSTER_IP_RANGE")"
+  export KUBE_DNS_IP="$(utils::service_ip "$KUBE_SERVICE_CLUSTER_IP_RANGE")00"
 
   for unit in "$@"; do
     utils::template "${TPL}/unit_${unit}" > "/etc/systemd/system/${unit}.service"

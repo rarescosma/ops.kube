@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/port: "9153"
+    prometheus.io/scrape: "true"
+  labels:
+    app: coredns-coredns
+    chart: coredns-0.8.0
+  name: coredns-coredns
+  namespace: foo
+  resourceVersion: "8233"
+spec:
+  clusterIP: 100.64.0.100
+  ports:
+  - name: dns
+    port: 53
+    protocol: UDP
+    targetPort: 53
+  - name: dns-tcp
+    port: 53
+    protocol: TCP
+    targetPort: 53
+  - name: metrics
+    port: 9153
+    protocol: TCP
+    targetPort: 9153
+  selector:
+    app: coredns-coredns
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+

@@ -1,0 +1,11 @@
+isClusterService: false
+serviceType: "ClusterIP"
+clusterIP: 100.64.0.200
+middleware:
+  kubernetes:
+    enabled: false
+  etcd:
+    enabled: true
+    zones:
+    - "kubernetes.federated"
+    endpoint: "http://etcd-cluster.federation-support:2379"

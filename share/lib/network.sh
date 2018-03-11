@@ -36,7 +36,7 @@ network::start() {
 
   for our_worker_ip in $(vm::discover "$CLUSTER" worker ips); do
     # Proxy services through the first worker
-    sudo ip route add "$KUBE_SERVICE_CLUSTER_IP_RANGE" via "$our_worker_ip" || true
+    sudo ip route add $(_network::cluster_range "$KUBE_SERVICE_CLUSTER_IP_RANGE") via "$our_worker_ip" || true
     break
   done
 }
@@ -51,4 +51,10 @@ network::stop() {
   done
   wait
   sudo ip route del "$KUBE_SERVICE_CLUSTER_IP_RANGE" &>/dev/null || true
+}
+
+_network::cluster_range() {
+  local service_range
+  service_range="${1}"
+  echo "$service_range" | sed -r 's|/[0-9]+|/16|'
 }

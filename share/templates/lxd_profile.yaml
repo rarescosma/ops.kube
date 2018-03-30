@@ -1,7 +1,6 @@
 name: ${LXD_PROFILE}
 config:
   raw.lxc: |
-    lxc.aa_profile=unconfined
     lxc.cap.drop=
     lxc.mount.auto="proc:rw sys:ro"
   security.nesting: "true"

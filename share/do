@@ -71,7 +71,7 @@ clean() {
   rm -rf "$DOT/etc/tls/$CLUSTER"
 
   cluster::clean
-  # utils::function_exists "vm::clean" && vm::clean
+  utils::function_exists "vm::clean" && vm::clean
 }
 
 orchestrate() {

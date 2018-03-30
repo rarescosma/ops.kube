@@ -50,7 +50,7 @@ network::stop() {
     sudo ip route del "$docker_subnet" &>/dev/null || true &
   done
   wait
-  sudo ip route del "$KUBE_SERVICE_CLUSTER_IP_RANGE" &>/dev/null || true
+  sudo ip route del $(_network::cluster_range "$KUBE_SERVICE_CLUSTER_IP_RANGE") &>/dev/null || true
 }
 
 _network::cluster_range() {

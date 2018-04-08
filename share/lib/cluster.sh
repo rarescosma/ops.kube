@@ -3,14 +3,23 @@
 cluster::stop() {
   dumpstack "$*"
   for mid in $(vm::discover "$CLUSTER" master); do
-    vm::stop "${mid}" &
+    vm::exec "${mid}" "halt" &
   done
 
   for wid in  $(vm::discover "$CLUSTER" worker); do
-    vm::stop "${wid}" &
+    vm::exec "${wid}" cluster::stop_worker &
   done
 
   wait
+}
+
+cluster::stop_worker() {
+  dumpstack "$*"
+  vm::assert_vm
+
+  systemctl stop kubelet || systemctl stop kubelet_single
+  docker rm -f "$(docker ps -a -q)" 2>/dev/null || true
+  halt
 }
 
 cluster::configure() {
@@ -18,29 +27,13 @@ cluster::configure() {
 
   # shellcheck source=/dev/null
   source "${DOT}/${CLUSTER}-cluster.sh"
-  utils::template "$TPL/kubeconfig_admin" > "$HOME/.kube/$CLUSTER"
+  utils::template "$TPL/kubeconfig_admin"
 }
 
-cluster::configure_secure() {
-  dumpstack "$*"
-
+cluster::master() {
   # shellcheck source=/dev/null
   source "${DOT}/${CLUSTER}-cluster.sh"
-
-  local kc='kubectl config'
-
-  $kc set-cluster "${CLUSTER}" \
-  --certificate-authority="${DOT}/etc/tls/${CLUSTER}/ca.pem" \
-  --embed-certs=true \
-  --server="https://${MASTER0_IP}:6443"
-
-  $kc set-credentials "${CLUSTER}-root" --token "${SECRET_TOKEN}"
-
-  $kc set-context "${CLUSTER}" \
-  --cluster="${CLUSTER}" \
-  --user="${CLUSTER}-root"
-
-  $kc use-context "${CLUSTER}"
+  echo "http://${MASTER0_IP}:8080"
 }
 
 cluster::clean() {

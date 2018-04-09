@@ -53,6 +53,7 @@ start() {
   orchestrate
 
   network::start
+  host::post
 }
 
 stop() {

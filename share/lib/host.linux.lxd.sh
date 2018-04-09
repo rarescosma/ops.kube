@@ -20,6 +20,8 @@ host::prepare() {
 
 host::post() {
   dumpstack "$*"
+  cluster::configure
+  addon::essentials
 }
 
 host::resolvconf::start() {

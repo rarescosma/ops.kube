@@ -3,23 +3,14 @@
 cluster::stop() {
   dumpstack "$*"
   for mid in $(vm::discover "$CLUSTER" master); do
-    vm::exec "${mid}" "halt" &
+    vm::stop "${mid}" &
   done
 
   for wid in  $(vm::discover "$CLUSTER" worker); do
-    vm::exec "${wid}" cluster::stop_worker &
+    vm::stop "${wid}" &
   done
 
   wait
-}
-
-cluster::stop_worker() {
-  dumpstack "$*"
-  vm::assert_vm
-
-  systemctl stop kubelet || systemctl stop kubelet_single
-  docker rm -f "$(docker ps -a -q)" 2>/dev/null || true
-  halt
 }
 
 cluster::configure() {
@@ -27,7 +18,6 @@ cluster::configure() {
 
   # shellcheck source=/dev/null
   source "${DOT}/${CLUSTER}-cluster.sh"
-
   utils::template "$TPL/kubeconfig_admin" > "$HOME/.kube/$CLUSTER"
 }
 

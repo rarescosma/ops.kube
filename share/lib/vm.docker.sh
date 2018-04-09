@@ -21,7 +21,7 @@ vm::run_dns() {
   -nameserver="8.8.8.8:53,8.8.4.4:53"
 }
 
-vm::launch() {
+vm::create() {
   dumpstack "$*"
   local vm="$1"; shift
 

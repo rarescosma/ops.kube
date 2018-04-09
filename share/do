@@ -42,7 +42,7 @@ source "$DOT/lib/provision.sh"
 # shellcheck source=/dev/null
 source "${DOT}/lib/vm.${VM_ENGINE}.sh"
 # shellcheck source=/dev/null
-source "${DOT}/lib/addons.sh"
+source "${DOT}/lib/addon.sh"
 
 start() {
   dumpstack "$*"

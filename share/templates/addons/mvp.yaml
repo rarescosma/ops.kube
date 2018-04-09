@@ -1,0 +1,90 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mvp-system
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mvp-all-in-one
+  namespace: mvp-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: all-in-one
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        component: all-in-one
+    spec:
+      containers:
+      - image: localhost:5000/mvp:141
+        name: mvp-balancer-applier-operator
+        imagePullPolicy: IfNotPresent
+        args:
+        - balancer
+        - applier
+        - operator
+        env:
+        - name: DATABASE
+          value: postgresql://postgres@10.0.40.65:5432
+        volumeMounts:
+        - name: live-code
+          mountPath: /dot/mvp
+      restartPolicy: Always
+      volumes:
+      - name: live-code
+        persistentVolumeClaim:
+          claimName: live-code-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: live-code-claim
+  namespace: mvp-system
+  labels:
+    component: all-in-one
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  selector:
+    matchLabels:
+      component: all-in-one
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: live-code
+  namespace: mvp-system
+  labels:
+    component: all-in-one
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /pv/kube/klarna/mvp
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: mvp-system:cluster-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: mvp-system

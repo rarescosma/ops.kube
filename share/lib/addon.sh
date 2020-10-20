@@ -22,5 +22,4 @@ addon::essentials() {
   addon_tpl coredns
   addon registry
   addon ingress
-  addon mvp
 }

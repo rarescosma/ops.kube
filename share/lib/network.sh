@@ -24,6 +24,11 @@ network::flush_iptables() {
   $ipt -t raw -X
 }
 
+network::gateway() {
+  dumpstack "$*"
+  ip route | grep default | cut -d" " -f3
+}
+
 network::start() {
   dumpstack "$*"
   local docker_subnet worker_ip our_worker_ip

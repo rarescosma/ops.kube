@@ -7,11 +7,14 @@ orchestrate::master() {
   local envvar
   envvar=$(utils::to_upper "master${index}_ip")
   local ip
+  local gw
 
   vm::create "$vm"
   ip=$(vm::exec "$vm" utils::wait_ip)
+  gw=$(vm::exec "$vm" network::gateway)
 
   utils::replace_line_by_prefix "${DOT}/${CLUSTER}-cluster.sh" "$envvar" "=\"${ip}\""
+  utils::replace_line_by_prefix "${DOT}/${CLUSTER}-cluster.sh" "DNSMASQ_IP" "=\"${gw}\""
 
   vm::exec "$vm" provision::master
 }

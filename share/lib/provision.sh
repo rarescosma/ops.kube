@@ -12,7 +12,7 @@ provision::master() {
   local dns_servers
   dns_servers="8.8.8.8"
   if [[ "$VM_ENGINE" == "lxd" ]]; then
-    dns_servers="$(ip route | grep default | cut -d" " -f3) 8.8.8.8"
+    dns_servers="$(network::gateway)"
   fi
 
   provision::resolv_conf ${dns_servers}

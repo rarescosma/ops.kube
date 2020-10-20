@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: kube-docker-registry
@@ -7,6 +7,9 @@ metadata:
     k8s-app: kube-docker-registry
     version: v0
 spec:
+  selector:
+    matchLabels:
+      k8s-app: kube-docker-registry
   template:
     metadata:
       labels:

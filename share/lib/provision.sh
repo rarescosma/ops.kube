@@ -4,10 +4,25 @@ provision::master() {
   dumpstack "$*"
   utils::export_vm
 
+  local dns_servers
+  dns_servers="8.8.8.8"
+  if [[ "$VM_ENGINE" == "lxd" ]]; then
+    dns_servers="$(network::gateway)"
+  fi
+
+  provision::resolv_conf ${dns_servers}
+
   provision::base -skipapt
 
   utils::template "$TPL/auth_token.csv" > /kube/etc/auth/token.csv
   cp -f "$TPL/auth_policy.jsonl" /kube/etc/auth/policy.jsonl
+
+  provision::setup_units ${MASTER_UNITS}
+}
+
+provision::worker() {
+  dumpstack "$*"
+  utils::export_vm
 
   local dns_servers
   dns_servers="8.8.8.8"
@@ -16,12 +31,6 @@ provision::master() {
   fi
 
   provision::resolv_conf ${dns_servers}
-  provision::setup_units ${MASTER_UNITS}
-}
-
-provision::worker() {
-  dumpstack "$*"
-  utils::export_vm
 
   provision::base -skipapt
 
@@ -36,13 +45,6 @@ provision::worker() {
 
   utils::template "$TPL/kubeconfig_kubelet" > /kube/etc/kubelet/kubeconfig
 
-  local dns_servers
-  dns_servers="8.8.8.8"
-  if [[ "$VM_ENGINE" == "lxd" ]]; then
-    dns_servers="8.8.8.8 $(ip route | grep default | cut -d" " -f3)"
-  fi
-
-  provision::resolv_conf ${dns_servers}
   provision::setup_units ${WORKER_UNITS}
 }
 

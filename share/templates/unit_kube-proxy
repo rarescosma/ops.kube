@@ -7,7 +7,7 @@ ExecStartPre=/bin/mount -o remount,ro /sys
 ExecStart=/usr/bin/kube-proxy \
   --master=http://${MASTER0_IP}:8080 \
   --kubeconfig=/kube/etc/kubelet/kubeconfig \
-  --proxy-mode=userspace \
+  --proxy-mode=iptables \
   --v=2
 
 Restart=on-failure

@@ -8,13 +8,14 @@ addon_tpl() {
 
   utils::template "$TPL/addons/${addon}.yaml.tpl" \
   | tee "$TPL/addons/${addon}.yaml" \
-  | kubectl apply -f -
+  | kubectl --kubeconfig="${HOME}/.kube/${CLUSTER}" apply -f -
 }
 
 addon() {
   local addon
   addon="${1}"
-  kubectl apply -f "$TPL/addons/${addon}.yaml"
+  kubectl --kubeconfig="${HOME}/.kube/${CLUSTER}" apply \
+    -f "$TPL/addons/${addon}.yaml"
 }
 
 addon::essentials() {

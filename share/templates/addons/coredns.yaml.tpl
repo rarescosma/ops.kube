@@ -45,20 +45,21 @@ metadata:
   namespace: kube-system
 data:
   Corefile: |
-    .:53 {
-        errors
+    svc.kubernetes.local:53 {
+        log
         health
         kubernetes ${KUBE_DNS_DOMAIN} ${KUBE_SERVICE_CLUSTER_IP_RANGE} {
           pods insecure
-          upstream
           fallthrough in-addr.arpa ip6.arpa
         }
-        prometheus :9153
-        proxy . /etc/resolv.conf
+    }
+    .:53 {
+        health
+        forward . 8.8.8.8
         cache 30
     }
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: coredns
@@ -86,7 +87,7 @@ spec:
           operator: "Exists"
       containers:
       - name: coredns
-        image: coredns/coredns:1.0.6
+        image: coredns/coredns:1.7.1
         imagePullPolicy: IfNotPresent
         args: [ "-conf", "/etc/coredns/Corefile" ]
         volumeMounts:

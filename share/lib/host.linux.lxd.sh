@@ -21,6 +21,7 @@ host::prepare() {
 host::post() {
   dumpstack "$*"
   cluster::configure
+  host::resolvconf::start
   addon::essentials
 }
 
@@ -29,13 +30,16 @@ host::resolvconf::start() {
   local dns_ip
   dns_ip="$(utils::service_ip "$KUBE_SERVICE_CLUSTER_IP_RANGE")00"
 
-  sudo chattr -i /etc/resolv.conf
+  sudo chattr -i /etc/resolv.conf /etc/resolv.dnsmasq.forward
   cat << __EOF__ | sudo tee /etc/resolv.conf
 search svc.kubernetes.local
-nameserver ${dns_ip}
+nameserver ${DNSMASQ_IP}
+__EOF__
+
+  cat << __EOF__ | sudo tee /etc/resolv.dnsmasq.forward
 nameserver 8.8.8.8
 __EOF__
-  sudo chattr +i /etc/resolv.conf
+  sudo chattr +i /etc/resolv.conf /etc/resolv.dnsmasq.forward
 }
 
 host::stop() {
@@ -47,7 +51,6 @@ host::resolvconf::stop() {
   dumpstack "$*"
   sudo chattr -i /etc/resolv.conf
   cat << __EOF__ | sudo tee /etc/resolv.conf
-search lan
 nameserver 8.8.8.8
 __EOF__
 }

@@ -1,0 +1,32 @@
+name: ${LXD_PROFILE}
+config:
+  raw.lxc: |
+    lxc.aa_profile=unconfined
+    lxc.cap.drop=
+    lxc.cgroup.devices.allow=a
+    lxc.mount.auto=proc:rw sys:ro cgroup:ro
+    lxc.kmsg=0
+    lxc.autodev=1
+  security.nesting: "true"
+  security.privileged: "true"
+description: LXC profile for Kubernetes VMs
+devices:
+  eth0:
+    name: ${VM_IFACE}
+    nictype: bridged
+    parent: ${LXD_BRIDGE}
+    type: nic
+  kubedir:
+    path: /kube
+    source: ${DOT}
+    type: disk
+  pvdir:
+    path: /pv/kube
+    source: ${KUBE_PV}/kube
+    type: disk
+  tuntap:
+    path: /dev/net/tun
+    type: unix-char
+  root:
+    path: /
+    type: disk

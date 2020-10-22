@@ -14,32 +14,15 @@ VM_HOST=$(hostname -s)
 
 export DOT TPL OUT_DIR VM_HOST
 
-_load_env() {
-  for _file in $(echo "$@" | tr ' ' '\n'); do
-    if test -f "${_file}"; then
-      # shellcheck source=/dev/null
-      source "${_file}"
-      export $(\
-        cat "${_file}" \
-        | sed '/^[[:space:]]*$/d' \
-        | sed '/^#.*$/d' \
-        | cut -d= -f1\
-      ) >/dev/null
-    fi
-  done
-}
-
 # shellcheck source=./lib/log.sh
-source "$DOT/lib/log.sh"
+source "$DOT/lib/utils.sh"
 
 test -f "${OUT_DIR}/config" || test -f "/kube/config" || {
   echo "Could not find cluster config. Aborting!" >&2
   exit 1
 }
-_load_env "${OUT_DIR}/config" "/kube/config" "${OUT_DIR}/env" "/kube/env"
+load_env "${OUT_DIR}/config" "/kube/config" "${OUT_DIR}/env" "/kube/env"
 
-# shellcheck source=/dev/null
-source "$DOT/lib/utils.sh"
 # shellcheck source=/dev/null
 source "$DOT/lib/cluster.sh"
 # shellcheck source=/dev/null

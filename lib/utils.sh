@@ -1,5 +1,30 @@
 #!/usr/bin/env bash
 
+dumpstack() {
+  local src
+  local kwargs="$*"
+
+  src="$(basename "${BASH_SOURCE[1]}")"
+  [[ "$src" =~ ^"$HOME"(/|$) ]] && src="~${src#$HOME}"
+  printf "%s | %s | %s(%s) @ %s:%s\\n" "$(date +%F@%T)" "${VM_HOST}" \
+    "${FUNCNAME[1]}" "$kwargs" "$src" "${BASH_LINENO[0]}" >&2
+}
+
+load_env() {
+  for _file in $(echo "$@" | tr ' ' '\n'); do
+    if test -f "${_file}"; then
+      # shellcheck source=/dev/null
+      source "${_file}"
+      export $(\
+        cat "${_file}" \
+        | sed '/^[[:space:]]*$/d' \
+        | sed '/^#.*$/d' \
+        | cut -d= -f1\
+      ) >/dev/null
+    fi
+  done
+}
+
 utils::download() {
   local url=$1
   local dest=$2

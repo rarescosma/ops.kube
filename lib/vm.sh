@@ -83,7 +83,7 @@ vm::exec() {
 
 vm::assert_vm() {
   [[ "lxc" == $(printenv container) ]] || \
-  (echo "Error: not in an LXC container" && exit 1)
+  (echo "Error: not in an LXC container" >&2 && exit 1)
 }
 
 vm::clean() {

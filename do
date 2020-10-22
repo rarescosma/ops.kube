@@ -19,19 +19,25 @@ _load_env() {
     if test -f "${_file}"; then
       # shellcheck source=/dev/null
       source "${_file}"
-      export $(<"${_file}" sed '/^[[:space:]]*$/d' | sed '/^#.*$/d' | cut -d= -f1)
+      export $(\
+        cat "${_file}" \
+        | sed '/^[[:space:]]*$/d' \
+        | sed '/^#.*$/d' \
+        | cut -d= -f1\
+      ) >/dev/null
     fi
   done
 }
 
+# shellcheck source=./lib/log.sh
+source "$DOT/lib/log.sh"
+
 test -f "${OUT_DIR}/config" || test -f "/kube/config" || {
-  echo "Could not find cluster config. Aborting!"
+  echo "Could not find cluster config. Aborting!" >&2
   exit 1
 }
 _load_env "${OUT_DIR}/config" "/kube/config" "${OUT_DIR}/env" "/kube/env"
 
-# shellcheck source=./lib/log.sh
-source "$DOT/lib/log.sh"
 # shellcheck source=/dev/null
 source "$DOT/lib/utils.sh"
 # shellcheck source=/dev/null

@@ -90,11 +90,6 @@ utils::replace_line_by_prefix() {
   set -e
 }
 
-utils::docker_subnet() {
-  local worker_ip=$1
-  echo "10.$(echo "$worker_ip" | cut -d. -f4).0.0/16"
-}
-
 utils::service_ip() {
   local service_subnet="$1"
   echo "$service_subnet" | sed -r 's/(.*)\.[[:digit:]]+\/[[:digit:]]+/\1.1/'

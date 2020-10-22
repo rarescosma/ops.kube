@@ -32,8 +32,23 @@ spec:
         ports:
         - name: registry
           containerPort: 5000
-          hostPort: 5000
       volumes:
       - name: image-store
         hostPath:
-          path: /pv/kube/registry/blue
+          path: /kube/pv/registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-docker-registry
+  namespace: kube-system
+  labels:
+    k8s-app: kube-docker-registry
+spec:
+  type: NodePort
+  selector:
+    k8s-app: kube-docker-registry
+  ports:
+    - port: 5000
+      name: http
+      nodePort: 5000

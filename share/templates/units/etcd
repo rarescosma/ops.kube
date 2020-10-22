@@ -3,7 +3,7 @@ Description=etcd
 Documentation=https://github.com/coreos
 
 [Service]
-ExecStart=/usr/bin/etcd --name ${VM_HOSTNAME} \
+ExecStart=/kube/bin/etcd --name ${VM_HOST} \
   --initial-advertise-peer-urls http://${VM_IP}:2380 \
   --listen-peer-urls http://${VM_IP}:2380 \
   --listen-client-urls http://${VM_IP}:2379,http://127.0.0.1:2379 \

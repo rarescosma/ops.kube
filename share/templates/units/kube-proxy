@@ -1,13 +1,13 @@
 [Unit]
 Description=Kubernetes Kube Proxy
-Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
-ExecStartPre=/bin/mount -o remount,ro /sys
-ExecStart=/usr/bin/kube-proxy \
+#ExecStartPre=/bin/mount -o remount,ro /sys
+ExecStart=/kube/bin/kube-proxy \
   --master=http://${MASTER0_IP}:8080 \
-  --kubeconfig=/kube/etc/kubelet/kubeconfig \
+  --kubeconfig=/kube/auth/kubelet_kubeconfig \
   --proxy-mode=iptables \
+  --masquerade-all \
   --v=2
 
 Restart=on-failure

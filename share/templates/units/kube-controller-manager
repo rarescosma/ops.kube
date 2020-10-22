@@ -3,13 +3,13 @@ Description=Kubernetes Controller Manager
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
-ExecStart=/usr/bin/kube-controller-manager \
+ExecStart=/kube/bin/kube-controller-manager \
   --cluster-name=kubernetes \
   --leader-elect=true \
   --master=http://${VM_IP}:8080 \
-  --root-ca-file=/kube/etc/tls/${CLUSTER}/ca.pem \
-  --service-account-private-key-file=/kube/etc/tls/${CLUSTER}/kubernetes-key.pem \
-  --service-cluster-ip-range=${KUBE_SERVICE_CLUSTER_IP_RANGE} \
+  --root-ca-file=/kube/auth/tls-ca.pem \
+  --service-account-private-key-file=/kube/auth/tls-kubernetes-key.pem \
+  --service-cluster-ip-range=${SERVICE_CIDR} \
   --v=2
 Restart=on-failure
 RestartSec=5

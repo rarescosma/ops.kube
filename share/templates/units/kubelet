@@ -1,0 +1,28 @@
+[Unit]
+Description=Kubernetes Kubelet
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+After=containerd.service
+Requires=containerd.service
+
+[Service]
+ExecStartPre=/bin/ln -sf /dev/console /dev/kmsg
+ExecStart=/kube/bin/kubelet \
+  --logtostderr=true \
+  --v=4 \
+  --port=10250 \
+  --cluster-dns="${KUBE_DNS_IP}" \
+  --cluster-domain=kubernetes.local \
+  --container-runtime=remote \
+  --container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \
+  --kubeconfig=/kube/auth/kubelet_kubeconfig \
+  --tls-cert-file=/kube/auth/tls-kubernetes.pem \
+  --tls-private-key-file=/kube/auth/tls-kubernetes-key.pem \
+  --fail-swap-on=false \
+  --volume-stats-agg-period=0 \
+  --housekeeping-interval=60s
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

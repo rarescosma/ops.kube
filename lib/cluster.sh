@@ -37,5 +37,5 @@ cluster::clean() {
   dumpstack "$*"
   vm::destroy "$(vm::discover "$CLUSTER" master)"
   vm::destroy "$(vm::discover "$CLUSTER" worker)"
-  cp -f "${DOT}/cluster.sh.empty" "${DOT}/${CLUSTER}-cluster.sh"
+  echo > "${OUT_DIR}/env"
 }

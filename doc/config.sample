@@ -1,0 +1,28 @@
+# =Prepare
+#
+# During the "prepare" stage we pull essential kubernetes, etcd and docker
+# binaries as well as generate TLS certificates for the cluster.
+V_ETCD="3.4.4"
+V_CNI="0.8.6"
+V_CONTAINERD="1.4.1"
+V_RUNC="1.0.0-rc91"
+V_KUBE="1.19.3"
+
+# =Persistence
+KUBE_HOST="linux.lxd"
+
+# =Orchestrate
+#
+# The "orchestrate" stage uses the lxd runtime to manage the lifecycle
+# of worker and master nodes.
+VM_IFACE="eth0"
+VM_NUM_WORKERS=2
+
+LXD_BASE_IMG="kubuntu"
+LXD_IMG_FROM="ubuntu:20.04" # ubuntu 20.04 amd64
+LXD_PROFILE="k1-lxd-profile"
+LXD_BRIDGE="lxdbr0"
+
+# =Provision
+SERVICE_CIDR="100.65.0.0/17"
+SECRET_TOKEN="ha1deUalsjkdalksdhaslkd"

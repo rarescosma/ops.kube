@@ -60,7 +60,7 @@ prepare::tls() {
   cd "$auth_dir" || exit
   cfssl gencert -initca "${tpl_dir}/tls-ca-csr.json" | cfssljson -bare tls-ca
 
-  envsubst <"${tpl_dir}/tls-kube-csr.json" >"${auth_dir}/tls-kube-csr.json"
+  utils::template "${tpl_dir}/tls-kube-csr.json" > "${auth_dir}/tls-kube-csr.json"
 
   cfssl gencert \
     -ca=tls-ca.pem \

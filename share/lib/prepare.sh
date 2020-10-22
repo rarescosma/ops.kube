@@ -80,25 +80,26 @@ prepare::bin() {
 
 prepare::tls() {
   dumpstack "$*"
-  local tls_dir
-  tls_dir="$DOT/etc/tls/$CLUSTER"
-  mkdir -p "$tls_dir"
+  local auth_dir tpl_dir
+  auth_dir="${OUT_DIR}/auth"
+  tpl_dir="${TPL}/auth"
+  mkdir -p "$auth_dir"
 
-  [ -f "$tls_dir/kubernetes.pem" ] && return
+  [ -f "$auth_dir/kubernetes.pem" ] && return
 
   export KUBE_SERVICE_CLUSTER_IP="$(utils::service_ip "$SERVICE_CIDR")"
 
-  cd "$tls_dir" || exit
-  cfssl gencert -initca "$TPL/tls_ca-csr.json" | cfssljson -bare ca
+  cd "$auth_dir" || exit
+  cfssl gencert -initca "${tpl_dir}/tls-ca-csr.json" | cfssljson -bare tls-ca
 
-  envsubst <"${TPL}/tls_kube-csr.json" >"${tls_dir}/tls_kube-csr.json"
+  envsubst <"${tpl_dir}/tls-kube-csr.json" >"${auth_dir}/tls-kube-csr.json"
 
   cfssl gencert \
-    -ca=ca.pem \
-    -ca-key=ca-key.pem \
-    -config="$TPL/tls_ca-config.json" \
+    -ca=tls-ca.pem \
+    -ca-key=tls-ca-key.pem \
+    -config="${TPL}/auth/tls-ca-config.json" \
     -profile=kubernetes \
-    "${tls_dir}/tls_kube-csr.json" | cfssljson -bare kubernetes
+    "${auth_dir}/tls-kube-csr.json" | cfssljson -bare tls-kubernetes
 
   cd - || exit
 }

@@ -14,8 +14,8 @@ provision::master() {
 
   provision::base -skipapt
 
-  utils::template "$TPL/auth_token.csv" > /kube/etc/auth/token.csv
   cp -f "$TPL/auth_policy.jsonl" /kube/etc/auth/policy.jsonl
+  utils::template "${TPL}/auth/token.csv" > "${OUT_DIR}/auth/token.csv"
 
   provision::setup_units ${MASTER_UNITS}
 }
@@ -43,7 +43,7 @@ provision::worker() {
   POD_BIP=${POD_CIDR//0.0/0.1}
   export POD_BIP
 
-  utils::template "$TPL/kubeconfig_kubelet" > /kube/etc/kubelet/kubeconfig
+  utils::template "${TPL}/auth/kubeconfig_kubelet" > "${OUT_DIR}/auth/kubelet_kubeconfig"
 
   provision::setup_units ${WORKER_UNITS}
 }
@@ -80,12 +80,14 @@ provision::base() {
 
 provision::setup_units() {
   dumpstack "$*"
-
-  export KUBE_SERVICE_CLUSTER_IP="$(utils::service_ip "$KUBE_SERVICE_CLUSTER_IP_RANGE")"
-  export KUBE_DNS_IP="$(utils::service_ip "$KUBE_SERVICE_CLUSTER_IP_RANGE")00"
+  local unit_dir out_dir
+  unit_dir="${TPL}/units"
+  out_dir="${OUT_DIR}/units"
+  mkdir -p "${out_dir}"
 
   for unit in "$@"; do
-    utils::template "${TPL}/unit_${unit}" > "/etc/systemd/system/${unit}.service"
+    utils::template "${unit_dir}/${unit}" > "${out_dir}/${unit}.service"
+    ln -sf "${out_dir}/${unit}.service" /etc/systemd/system/
   done
 
   systemctl daemon-reload

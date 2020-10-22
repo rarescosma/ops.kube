@@ -11,7 +11,7 @@ metadata:
     kubernetes.io/bootstrapping: rbac-defaults
   name: system:coredns
 rules:
-- apiGroups: [\"\"]
+- apiGroups: [""]
   resources:
   - endpoints
   - services
@@ -125,7 +125,7 @@ metadata:
   namespace: kube-system
   labels:
     k8s-app: coredns
-    kubernetes.io/cluster-service: \"true\"
+    kubernetes.io/cluster-service: "true"
     kubernetes.io/name: "CoreDNS"
 spec:
   selector:

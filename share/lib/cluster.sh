@@ -24,10 +24,7 @@ cluster::stop_worker() {
 
 cluster::configure() {
   dumpstack "$*"
-
-  # shellcheck source=/dev/null
-  source "${DOT}/${CLUSTER}-cluster.sh"
-  utils::template "$TPL/kubeconfig_admin"
+  utils::template "${TPL}/auth/kubeconfig_admin"
 }
 
 cluster::master() {

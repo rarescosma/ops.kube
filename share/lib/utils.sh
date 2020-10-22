@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-# Shhhhhh...
-pushd() {
-  command pushd "$@" > /dev/null
-}
-popd() {
-  command popd "$@" > /dev/null
-}
-
 utils::download() {
   local url=$1
   local dest=$2
@@ -19,21 +11,22 @@ utils::download() {
   fi
 }
 
-utils::pull_tgz() {
+utils::pluck_binaries() {
   local tmp
   tmp=$(mktemp -d)
-  local url=$1
-  local target=$2
-  local glob_prefix=$3
+  local url="${1}"
+  local dest_dir="${2}"
+  mkdir -p "${dest_dir}"
 
   utils::download "$url" "${tmp}/archive.tgz"
-  tar --strip-components=1 -C "$tmp" -xf "$tmp/archive.tgz"
-  mv "$tmp/${glob_prefix}"* "$target/"
-  rm -rf "$tmp"
+  tar -C "${tmp}" -xf "${tmp}/archive.tgz"
+  find "${tmp}" -type f -executable -print0 | \
+    xargs -0 -I{} mv {} "${dest_dir}/"
+  rm -rf "${tmp:?}"
 }
 
 utils::template() {
-  eval "echo \"$(cat "$1")\""
+  envsubst <"${1}"
 }
 
 utils::get_random_string() {
@@ -63,11 +56,11 @@ utils::wait_ip() {
 utils::export_vm() {
   vm::assert_vm
 
-  VM_HOSTNAME=$(hostname)
-  export VM_HOSTNAME
-
+  VM_HOST=$(hostname -s)
   VM_IP=$(utils::wait_ip)
-  export VM_IP
+  OUT_DIR="/kube"
+
+  export VM_HOST VM_IP OUT_DIR
 }
 
 utils::to_upper() {

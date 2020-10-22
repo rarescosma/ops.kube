@@ -17,8 +17,8 @@ cluster::stop_worker() {
   dumpstack "$*"
   vm::assert_vm
 
-  systemctl stop kubelet || systemctl stop kubelet_single
-  docker rm -f "$(docker ps -a -q)" 2>/dev/null || true
+  systemctl stop kubelet
+  systemctl stop containerd
   halt
 }
 

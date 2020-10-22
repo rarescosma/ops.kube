@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+orchestrate::main() {
+  orchestrate::master 0
+
+  for x in $(seq 0 $((VM_NUM_WORKERS-1))); do
+    orchestrate::worker "$x" &
+  done
+  wait
+}
+
 orchestrate::master() {
   dumpstack "$*"
   local index=${1:-"0"}

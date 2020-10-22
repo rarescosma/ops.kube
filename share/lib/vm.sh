@@ -12,7 +12,9 @@ vm::create() {
 
 vm::destroy() {
   dumpstack "$*"
-  lxc delete -f "$@" || true
+  if [ -n "$*" ]; then
+    lxc delete -f $@ || true
+  fi
 }
 
 vm::stop() {
@@ -45,7 +47,7 @@ vm::create_base_image() {
   local vm
   vm="kubetmp-$(utils::get_random_string)"
 
-  lxc launch "$LXD_IMG_FROM" "$vm" --profile "$LXD_PROFILE" || lxc start "$vm"
+  lxc launch "$LXD_IMG_FROM" "$vm" --profile "$LXD_PROFILE" || lxc start "$vm" || true
   vm::exec "$vm" provision::base
 
   lxc stop "$vm";
@@ -76,7 +78,7 @@ vm::discover() {
 vm::exec() {
   dumpstack "$*"
   local vm=$1; shift
-  lxc exec "$vm" -- /kube/do "${CLUSTER}" "$@"
+  lxc exec "$vm" -- /ops.kube/do "${CLUSTER}" "$@"
 }
 
 vm::assert_vm() {
@@ -87,15 +89,4 @@ vm::assert_vm() {
 vm::clean() {
   dumpstack "$*"
   lxc profile delete "$LXD_PROFILE" || true
-}
-
-vm::restart_daemon() {
-  dumpstack "$*"
-  # restart lxd and wait for it
-  sudo killall dnsmasq || true
-  sudo systemctl restart lxd
-  while true; do
-    lxc list 1>/dev/null && break
-    sleep 1
-  done
 }

@@ -1,11 +1,19 @@
 #!/usr/bin/env bash
 
-host::restart_lxd() {
+host::prepare() {
   dumpstack "$*"
+  local lxd_unit
+
+  if [ -x "$(command -v snap)" ]; then
+    lxd_unit="snap.lxd.daemon"
+  else
+    lxd_unit="lxd"
+  fi
+
   # restart lxd and wait for it
-  sudo systemctl is-active --quiet lxd || {
+  sudo systemctl is-active --quiet ${lxd_unit} || {
     sudo killall dnsmasq || true
-    sudo systemctl restart lxd
+    sudo systemctl restart ${lxd_unit}
     while true; do
       lxc list 1>/dev/null && break
       sleep 1
@@ -13,23 +21,17 @@ host::restart_lxd() {
   }
 }
 
-host::prepare() {
-  dumpstack "$*"
-  host::restart_lxd
-}
-
 host::post() {
   dumpstack "$*"
-  cluster::configure
-  host::resolvconf::start
-  addon::essentials
+  _mangle_resolvconf
 }
 
-host::resolvconf::start() {
+host::stop() {
   dumpstack "$*"
-  local dns_ip
-  dns_ip="$(utils::service_ip "$KUBE_SERVICE_CLUSTER_IP_RANGE")00"
+  _restore_resolvconf
+}
 
+_mangle_resolvconf() {
   sudo chattr -i /etc/resolv.conf /etc/resolv.dnsmasq.forward
   cat << __EOF__ | sudo tee /etc/resolv.conf
 search svc.kubernetes.local
@@ -42,13 +44,8 @@ __EOF__
   sudo chattr +i /etc/resolv.conf /etc/resolv.dnsmasq.forward
 }
 
-host::stop() {
-  dumpstack "$*"
-  host::resolvconf::stop
-}
 
-host::resolvconf::stop() {
-  dumpstack "$*"
+_restore_resolvconf() {
   sudo chattr -i /etc/resolv.conf
   cat << __EOF__ | sudo tee /etc/resolv.conf
 nameserver 8.8.8.8

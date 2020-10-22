@@ -1,6 +1,22 @@
 #!/usr/bin/env bash
 
 CACHE_DIR="${KUBE_PV}/kube/cache"
+declare -a _TARBALLS=(
+  "https://github.com/coreos/etcd/releases/download/v${V_ETCD}/etcd-v${V_ETCD}-linux-amd64.tar.gz"
+  "https://github.com/containernetworking/plugins/releases/download/v${V_CNI}/cni-plugins-linux-amd64-v${V_CNI}.tgz"
+  "https://github.com/containerd/containerd/releases/download/v${V_CONTAINERD}/containerd-${V_CONTAINERD}-linux-amd64.tar.gz"
+)
+
+declare -a _BINS=(
+  "https://github.com/opencontainers/runc/releases/download/v${V_RUNC}/runc.amd64"
+  "https://storage.googleapis.com/kubernetes-release/release/v${V_KUBE}/bin/linux/amd64/kube-apiserver"
+  "https://storage.googleapis.com/kubernetes-release/release/v${V_KUBE}/bin/linux/amd64/kube-controller-manager"
+  "https://storage.googleapis.com/kubernetes-release/release/v${V_KUBE}/bin/linux/amd64/kube-proxy"
+  "https://storage.googleapis.com/kubernetes-release/release/v${V_KUBE}/bin/linux/amd64/kube-scheduler"
+  "https://storage.googleapis.com/kubernetes-release/release/v${V_KUBE}/bin/linux/amd64/kubectl"
+  "https://storage.googleapis.com/kubernetes-release/release/v${V_KUBE}/bin/linux/amd64/kubelet"
+
+)
 
 prepare() {
   dumpstack "$*"
@@ -8,74 +24,26 @@ prepare() {
   prepare::tls
 }
 
-prepare::bin::sync_kube() {
-  dumpstack "$*"
-  echo "Checking Kube bins v.${KUBE_VERSION}"
-  local target="${CACHE_DIR}/kube_${KUBE_VERSION}" && mkdir -p "$target"
-
-  if [ ! -x "${target}/kubectl" ]; then
-    local tmp
-    tmp="$KUBE_PV/tmp"
-    mkdir -p "$tmp"
-    local release_dir="${tmp}/kubernetes/server/kubernetes/server/bin"
-    local bin
-
-    utils::download "$KUBE_TGZ" "${tmp}/archive.tgz"
-    tar -C "$tmp" -xf "${tmp}/archive.tgz"
-
-    # 1.5.4 compatibility - need an extra step to pull kube binaries
-    cd "${tmp}/kubernetes/cluster" || exit
-    KUBERNETES_SKIP_CONFIRM=1 ./get-kube-binaries.sh
-    cd - || exit
-
-    cd "${tmp}/kubernetes/server" || exit
-    tar xzf kubernetes-server-linux-amd64.tar.gz
-    cd - || exit
-
-    for bin in "${KUBE_BINS[@]}"; do
-      target="${CACHE_DIR}/kube_${KUBE_VERSION}/${bin}"
-      [ -x "$target" ] || mv "${release_dir}/${bin}" "$target"
-    done
-  fi
-}
-
-prepare::bin::sync_etcd() {
-  dumpstack "$*"
-  echo "Checking Etcd bins v.${ETCD_VERSION}"
-  local target="${CACHE_DIR}/etcd_${ETCD_VERSION}" && mkdir -p "$target"
-  [ -x "${target}/etcdctl" ] || utils::pull_tgz "$ETCD_TGZ" "$target" etcd
-}
-
-prepare::bin::sync_docker() {
-  dumpstack "$*"
-  echo "Checking Docker bins v.${DOCKER_VERSION}"
-  local target="${CACHE_DIR}/docker_${DOCKER_VERSION}" && mkdir -p "$target"
-  [ -x "${target}/docker" ] || utils::pull_tgz "$DOCKER_TGZ" "$target" docker
-}
-
 prepare::bin() {
   dumpstack "$*"
-  mkdir -p "${CACHE_DIR}"
-  mkdir -p "$DOT/.bincache" "$DOT/bin"
-  mkdir -p "${KUBE_PV}/kube/bin"
+  local bin_dir done_dir done_file
+  bin_dir="${OUT_DIR}/bin"
+  done_dir="${OUT_DIR}/.done"
+  mkdir -p "${bin_dir}" "${done_dir}"
 
-  prepare::bin::sync_kube &
-  prepare::bin::sync_etcd &
-  if [ -z "${USE_SYSTEM_DOCKER+x}" ]; then
-    prepare::bin::sync_docker &
-  fi
-  wait
+  for bin in "${_BINS[@]}"; do
+    target="${bin_dir}/$(basename ${bin})"
+    [ -x "$target" ] || utils::download "${bin}" "${target}"
+  done
 
-  echo "Creating symlinks"
-  cd "${KUBE_PV}/kube/bin" || exit
-  ln -sf "../cache/kube_${KUBE_VERSION}/"* .
-  ln -sf "../cache/etcd_${ETCD_VERSION}/"* .
-  if [ -z "${USE_SYSTEM_DOCKER+x}" ]; then
-    ln -sf "../cache/docker_${DOCKER_VERSION}/"* .
-  fi
-  cd - || exit
-
-  chmod -R +x "${CACHE_DIR}"
+  for tarball in "${_TARBALLS[@]}"; do
+    done_file="${done_dir}/$(basename ${tarball})"
+    [ -f "${done_file}" ] || {
+      utils::pluck_binaries "${tarball}" "${bin_dir}"
+      touch "${done_file}"
+    }
+  done
+  chmod -R +x "${bin_dir}"
 }
 
 prepare::tls() {

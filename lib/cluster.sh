@@ -24,6 +24,7 @@ cluster::stop_worker() {
 
 cluster::configure() {
   dumpstack "$*"
+  load_env "${OUT_DIR}/env" "/kube/env"
   utils::template "${TPL}/auth/kubeconfig_admin"
 }
 

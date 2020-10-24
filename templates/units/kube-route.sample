@@ -1,0 +1,14 @@
+[Unit]
+Description=Add route to k8s service CIDR
+After=snap.lxd.daemon.service
+Requires=snap.lxd.daemon.service
+
+[Service]
+Environment=CLUSTER=trial
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=~/bin/kdo network::cycle
+
+[Install]
+WantedBy=default.target
+

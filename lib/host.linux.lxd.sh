@@ -23,7 +23,7 @@ host::prepare() {
 
 host::post() {
   dumpstack "$*"
-  _mangle_resolvconf
+  host::mangle_resolvconf
 }
 
 host::stop() {
@@ -31,11 +31,14 @@ host::stop() {
   _restore_resolvconf
 }
 
-_mangle_resolvconf() {
+host::mangle_resolvconf() {
+  local dns_ip
+  dns_ip="$(utils::service_ip "$SERVICE_CIDR").100"
+
   sudo chattr -i /etc/resolv.conf /etc/resolv.dnsmasq.forward
   cat << __EOF__ | sudo tee /etc/resolv.conf
 search svc.kubernetes.local
-nameserver ${DNSMASQ_IP}
+nameserver ${dns_ip}
 __EOF__
 
   cat << __EOF__ | sudo tee /etc/resolv.dnsmasq.forward

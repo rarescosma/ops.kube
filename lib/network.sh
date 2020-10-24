@@ -25,12 +25,7 @@ network::start() {
     pod_cidr=$(network::pod_cidr "$worker_ip")
     sudo ip route add "$pod_cidr" via "$worker_ip" || true
   done
-
-  for our_worker_ip in $(vm::discover "$CLUSTER" worker ips); do
-    # Proxy services through the first worker
-    sudo ip route add $(_network::cluster_range "$SERVICE_CIDR") via "$our_worker_ip" || true
-    break
-  done
+  sudo ip route add "${SERVICE_CIDR}" $(_network::service_hops)
 }
 
 network::stop() {
@@ -41,11 +36,11 @@ network::stop() {
     pod_cidr=$(network::pod_cidr "$our_worker_ip")
     sudo ip route del "$pod_cidr" &>/dev/null || true
   done
-  sudo ip route del $(_network::cluster_range "$SERVICE_CIDR") &>/dev/null || true
+  sudo ip route del "$SERVICE_CIDR" &>/dev/null || true
 }
 
-_network::cluster_range() {
-  local service_range
-  service_range="${1}"
-  echo "$service_range" | sed -r 's|/[0-9]+|/16|'
+_network::service_hops() {
+  for our_worker_ip in $(vm::discover "$CLUSTER" worker ips); do
+    echo -n "nexthop via ${our_worker_ip} dev ${LXD_BRIDGE} weight 1 "
+  done
 }

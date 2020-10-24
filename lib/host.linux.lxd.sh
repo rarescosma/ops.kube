@@ -21,21 +21,18 @@ host::prepare() {
   }
 }
 
-host::post() {
-  dumpstack "$*"
+host::start() {
+  _restore_resolvconf
+  utils::wait_for_net
+  orchestrate::main
+  network::cycle
   _mangle_resolvconf
 }
 
 host::stop() {
   dumpstack "$*"
   _restore_resolvconf
-}
-
-host::kube_route() {
-  _restore_resolvconf
-  utils::wait_for_net
-  network::cycle
-  _mangle_resolvconf
+  cluster::stop
 }
 
 _mangle_resolvconf() {

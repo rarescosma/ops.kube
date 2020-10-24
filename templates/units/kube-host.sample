@@ -4,11 +4,12 @@ After=snap.lxd.daemon.service
 Requires=snap.lxd.daemon.service
 
 [Service]
-Environment=CLUSTER=trial
+Environment=HOME=${HOME}
+Environment=CLUSTER=${CLUSTER}
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=~/bin/kdo network::cycle
+ExecStart=~/bin/kdo host::start
+ExecStop=~/bin/kdo host::stop
 
 [Install]
 WantedBy=default.target
-

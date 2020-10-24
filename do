@@ -52,7 +52,6 @@ start() {
 
   network::start
   cluster::configure
-  host::post
 }
 
 stop() {

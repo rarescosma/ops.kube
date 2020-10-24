@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: kube-docker-registry
-  namespace: kube-system
+  name: registry
+  namespace: sys
   labels:
     k8s-app: kube-docker-registry
     version: v0
@@ -41,7 +41,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kube-docker-registry
-  namespace: kube-system
+  namespace: sys
   labels:
     k8s-app: kube-docker-registry
 spec:

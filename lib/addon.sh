@@ -25,5 +25,5 @@ addon() {
 addon::sys() {
   addon registry
   addon_tpl coredns
-  addon_tpl ingress
+  addon_tpl ingress-nginx
 }

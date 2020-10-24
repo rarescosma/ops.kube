@@ -1,45 +1,25 @@
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: ingress-nginx
-  labels:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
-
----
-# Source: ingress-nginx/templates/controller-serviceaccount.yaml
-apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/version: 0.40.2
-    app.kubernetes.io/component: controller
   name: ingress-nginx
-  namespace: ingress-nginx
+  namespace: sys
 ---
-# Source: ingress-nginx/templates/controller-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   labels:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/version: 0.40.2
-    app.kubernetes.io/component: controller
-  name: ingress-nginx-controller
-  namespace: ingress-nginx
+  name: ingress-nginx
+  namespace: sys
 data:
   use-proxy-protocol: "true"
 ---
-# Source: ingress-nginx/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/version: 0.40.2
   name: ingress-nginx
 rules:
@@ -101,13 +81,10 @@ rules:
       - list
       - watch
 ---
-# Source: ingress-nginx/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/version: 0.40.2
   name: ingress-nginx
 roleRef:
@@ -117,19 +94,15 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: ingress-nginx
-    namespace: ingress-nginx
+    namespace: sys
 ---
-# Source: ingress-nginx/templates/controller-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/version: 0.40.2
-    app.kubernetes.io/component: controller
   name: ingress-nginx
-  namespace: ingress-nginx
+  namespace: sys
 rules:
   - apiGroups:
       - ''
@@ -212,17 +185,13 @@ rules:
       - create
       - patch
 ---
-# Source: ingress-nginx/templates/controller-rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/version: 0.40.2
-    app.kubernetes.io/component: controller
   name: ingress-nginx
-  namespace: ingress-nginx
+  namespace: sys
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -230,33 +199,25 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: ingress-nginx
-    namespace: ingress-nginx
+    namespace: sys
 ---
-# Source: ingress-nginx/templates/controller-deployment.yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/version: 0.40.2
-    app.kubernetes.io/component: controller
-  name: ingress-nginx-controller
-  namespace: ingress-nginx
+  name: ingress-nginx
+  namespace: sys
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: ingress-nginx
-      app.kubernetes.io/instance: ingress-nginx
-      app.kubernetes.io/component: controller
+      app.kubernetes.io/sys: ingress-nginx
   revisionHistoryLimit: 10
   minReadySeconds: 0
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: ingress-nginx
-        app.kubernetes.io/instance: ingress-nginx
-        app.kubernetes.io/component: controller
+        app.kubernetes.io/sys: ingress-nginx
     spec:
       dnsPolicy: ClusterFirst
       containers:
@@ -272,7 +233,7 @@ spec:
             - /nginx-ingress-controller
             - --election-id=ingress-controller-leader
             - --ingress-class=nginx
-            - --configmap=$(POD_NAMESPACE)/ingress-nginx-controller
+            - --configmap=$(POD_NAMESPACE)/ingress-nginx
           securityContext:
             capabilities:
               drop:
@@ -331,12 +292,9 @@ kind: Service
 metadata:
   annotations:
   labels:
-    app.kubernetes.io/component: controller
-    app.kubernetes.io/instance: ingress-nginx
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/cluster-service: "true"
+    app.kubernetes.io/version: 0.40.2
   name: ingress-nginx
-  namespace: ingress-nginx
+  namespace: sys
 spec:
   ports:
     - name: http
@@ -344,5 +302,4 @@ spec:
     - name: https
       port: 443
   selector:
-    app.kubernetes.io/name: ingress-nginx
-  clusterIP: ${KUBE_INGRESS_IP}
+    app.kubernetes.io/sys: ingress-nginx

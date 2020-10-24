@@ -296,10 +296,13 @@ metadata:
   name: ingress-nginx
   namespace: sys
 spec:
+  type: NodePort
   ports:
     - name: http
       port: 80
+      nodePort: 10080
     - name: https
       port: 443
+      nodePort: 10443
   selector:
     app.kubernetes.io/sys: ingress-nginx

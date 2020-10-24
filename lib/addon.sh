@@ -3,7 +3,8 @@
 addon_tpl() {
   local addon
   addon="${1}"
-  export KUBE_DNS_IP="$(utils::service_ip "$SERVICE_CIDR")00"
+  export KUBE_DNS_IP="$(utils::service_ip "$SERVICE_CIDR").100"
+  export KUBE_INGRESS_IP="$(utils::service_ip "$SERVICE_CIDR").200"
   export KUBE_DNS_DOMAIN="kubernetes.local"
 
   utils::template "$TPL/addons/${addon}.yaml.tpl" \
@@ -19,7 +20,7 @@ addon() {
 }
 
 addon::essentials() {
-  addon_tpl coredns
   addon registry
-  addon ingress
+  addon_tpl coredns
+  addon_tpl ingress
 }

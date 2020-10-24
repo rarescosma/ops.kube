@@ -334,18 +334,15 @@ metadata:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/cluster-service: "true"
   name: ingress-nginx
   namespace: ingress-nginx
 spec:
   ports:
     - name: http
-      nodePort: 10080
       port: 80
-      targetPort: 80
     - name: https
-      nodePort: 10443
       port: 443
-      targetPort: 443
   selector:
     app.kubernetes.io/name: ingress-nginx
-  type: NodePort
+  clusterIP: ${KUBE_INGRESS_IP}

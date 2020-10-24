@@ -44,10 +44,16 @@ __EOF__
   sudo chattr +i /etc/resolv.conf /etc/resolv.dnsmasq.forward
 }
 
-
 _restore_resolvconf() {
   sudo chattr -i /etc/resolv.conf
   cat << __EOF__ | sudo tee /etc/resolv.conf
 nameserver 8.8.8.8
 __EOF__
+}
+
+_add_k8s_zone_to_dnsmasq() {
+  local dns_ip
+  dns_ip="$(utils::service_ip "$SERVICE_CIDR").100"
+  echo -e "resolv-file=/etc/resolv.dnsmasq.forward\nserver=/kubernetes.local/${dns_ip}" \
+  | lxc network set "${LXD_BRIDGE}" raw.dnsmasq -
 }

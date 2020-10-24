@@ -45,13 +45,13 @@ metadata:
   namespace: kube-system
 data:
   Corefile: |
-    svc.kubernetes.local:53 {
         log
         health
-        kubernetes ${KUBE_DNS_DOMAIN} ${KUBE_SERVICE_CLUSTER_IP_RANGE} {
           pods insecure
           fallthrough in-addr.arpa ip6.arpa
         }
+    svc.${CLUSTER_DOMAIN}:53 {
+      kubernetes ${CLUSTER_DOMAIN} ${SERVICE_CIDR} {
     }
     .:53 {
         health

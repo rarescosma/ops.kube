@@ -322,9 +322,9 @@
     "10.0.40.254",
     "10.0.40.255",
     "127.0.0.1",
-    "kubernetes.local",
-    "*.kubernetes.local",
-    "*.svc.kubernetes.local",
+    "${CLUSTER_DOMAIN}",
+    "*.${CLUSTER_DOMAIN}",
+    "*.svc.${CLUSTER_DOMAIN}",
     "kubernetes.default.svc"
   ],
   "key": {

@@ -11,8 +11,10 @@ DOT=$(cd -P "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
 TPL="${DOT}/templates"
 OUT_DIR="${PREFIX:-${HOME}}/kube/${CLUSTER}"
 VM_HOST=$(hostname -s)
+CLUSTER_DOMAIN="k8s.local"
+LXD_DOMAIN="lxd.local"
 
-export DOT TPL OUT_DIR VM_HOST
+export DOT TPL OUT_DIR VM_HOST CLUSTER_DOMAIN LXD_DOMAIN
 
 # shellcheck source=./lib/log.sh
 source "$DOT/lib/utils.sh"

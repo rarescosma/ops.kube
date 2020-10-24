@@ -41,6 +41,7 @@ provision::resolv_conf() {
   rc="/etc/resolv.conf"
 
   rm -f "$rc" && touch "$rc"
+  echo "search svc.${CLUSTER_DOMAIN}" >> "$rc"
   for server in $*; do
     echo "nameserver $server" >> "$rc"
   done

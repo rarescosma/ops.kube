@@ -41,12 +41,12 @@ _mangle_resolvconf() {
 
   sudo chattr -i /etc/resolv.conf /etc/resolv.dnsmasq.forward
   cat << __EOF__ | sudo tee /etc/resolv.conf
-search svc.kubernetes.local
 nameserver ${dns_ip}
 __EOF__
 
   cat << __EOF__ | sudo tee /etc/resolv.dnsmasq.forward
 nameserver 8.8.8.8
+search svc.${CLUSTER_DOMAIN} ${LXD_DOMAIN}
 __EOF__
   sudo chattr +i /etc/resolv.conf /etc/resolv.dnsmasq.forward
 }
@@ -59,8 +59,8 @@ __EOF__
 }
 
 _add_k8s_zone_to_dnsmasq() {
-  local dns_ip
-  dns_ip="$(utils::service_ip "$SERVICE_CIDR").100"
-  echo -e "resolv-file=/etc/resolv.dnsmasq.forward\nserver=/kubernetes.local/${dns_ip}" \
+  local coredns_ip
+  coredns_ip="$(utils::service_ip "$SERVICE_CIDR").100"
+  echo -e "server=/${CLUSTER_DOMAIN}/${coredns_ip}" \
   | lxc network set "${LXD_BRIDGE}" raw.dnsmasq -
 }

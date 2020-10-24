@@ -36,19 +36,15 @@ host::stop() {
 }
 
 _mangle_resolvconf() {
-  local dns_ip
-  dns_ip="$(utils::service_ip "$SERVICE_CIDR").100"
+  local coredns_ip
+  coredns_ip="$(utils::service_ip "$SERVICE_CIDR").100"
 
-  sudo chattr -i /etc/resolv.conf /etc/resolv.dnsmasq.forward
+  sudo chattr -i /etc/resolv.conf
   cat << __EOF__ | sudo tee /etc/resolv.conf
-nameserver ${dns_ip}
-__EOF__
-
-  cat << __EOF__ | sudo tee /etc/resolv.dnsmasq.forward
-nameserver 8.8.8.8
 search svc.${CLUSTER_DOMAIN} ${LXD_DOMAIN}
+nameserver ${coredns_ip}
 __EOF__
-  sudo chattr +i /etc/resolv.conf /etc/resolv.dnsmasq.forward
+  sudo chattr +i /etc/resolv.conf
 }
 
 _restore_resolvconf() {

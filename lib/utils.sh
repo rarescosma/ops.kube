@@ -67,11 +67,10 @@ utils::get_ip() {
 }
 
 utils::wait_ip() {
-  local interface=${1:-"$VM_IFACE"}
-  dumpstack "${interface}"
+  dumpstack "${VM_IFACE}"
   local ip
   while true; do
-    ip=$(utils::get_ip "$interface")
+    ip=$(utils::get_ip "$VM_IFACE")
     if [[ "${ip}" != "" ]]; then
       echo "$ip" && break
     fi

@@ -23,7 +23,7 @@ host::prepare() {
 
 host::post() {
   dumpstack "$*"
-  host::mangle_resolvconf
+  _mangle_resolvconf
 }
 
 host::stop() {
@@ -31,7 +31,13 @@ host::stop() {
   _restore_resolvconf
 }
 
-host::mangle_resolvconf() {
+host::kube_route() {
+  utils::wait_for_net
+  network::cycle
+  _mangle_resolvconf
+}
+
+_mangle_resolvconf() {
   local dns_ip
   dns_ip="$(utils::service_ip "$SERVICE_CIDR").100"
 

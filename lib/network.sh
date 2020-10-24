@@ -32,10 +32,10 @@ network::stop() {
   dumpstack "$*"
   local pod_cidr our_worker_ip
 
-  for our_worker_ip in $(vm::discover worker ips); do
-    pod_cidr=$(network::pod_cidr "$our_worker_ip")
-    sudo ip route del "$pod_cidr" &>/dev/null || true
-  done
+  ip route | grep -E "lxdbr0\s?$" \
+  | cut -d" " -f1 \
+  | xargs -I{} sudo ip route del {};
+
   sudo ip route del "$SERVICE_CIDR" &>/dev/null || true
 }
 

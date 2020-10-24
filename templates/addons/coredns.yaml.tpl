@@ -45,13 +45,22 @@ metadata:
   namespace: sys
 data:
   Corefile: |
-        log
-        health
-          pods insecure
-          fallthrough in-addr.arpa ip6.arpa
-        }
     svc.${CLUSTER_DOMAIN}:53 {
+      log
+      health
       kubernetes ${CLUSTER_DOMAIN} ${SERVICE_CIDR} {
+        pods insecure
+        fallthrough in-addr.arpa ip6.arpa
+      }
+    }
+    lxd.local:53 {
+      health
+      rewrite stop {
+        name regex (.*).${ASSCAPED_LXD_DOMAIN} {1}
+        answer name (.*) {1}${LXD_DOMAIN}
+      }
+      forward . ${DNSMASQ_IP}
+      cache 30
     }
     .:53 {
         health

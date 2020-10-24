@@ -4,8 +4,7 @@ addon_tpl() {
   local addon
   addon="${1}"
   export KUBE_DNS_IP="$(utils::service_ip "$SERVICE_CIDR").100"
-  export KUBE_INGRESS_IP="$(utils::service_ip "$SERVICE_CIDR").200"
-  export KUBE_DNS_DOMAIN="kubernetes.local"
+  export ASSCAPED_LXD_DOMAIN="${LXD_DOMAIN/\./\\.}"
 
   mkdir -p "${OUT_DIR}/.manifests"
   {

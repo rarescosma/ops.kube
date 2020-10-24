@@ -7,8 +7,10 @@ addon_tpl() {
   export KUBE_INGRESS_IP="$(utils::service_ip "$SERVICE_CIDR").200"
   export KUBE_DNS_DOMAIN="kubernetes.local"
 
+  mkdir -p "$TPL/addons/.out"
+
   utils::template "$TPL/addons/${addon}.yaml.tpl" \
-  | tee "$TPL/addons/${addon}.yaml" \
+  | tee "$TPL/addons/.out/${addon}.yaml" \
   | kubectl apply -f -
 }
 

@@ -9,4 +9,5 @@
 /bin/kubectl
 /share/lib/host.sh
 /tmp
+/templates/addons/.out
 

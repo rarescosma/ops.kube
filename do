@@ -52,8 +52,13 @@ start() {
   utils::function_exists "vm::prepare" && vm::prepare
   orchestrate::main
 
+  # reload dynamic environment after orchestration
+  load_env "${OUT_DIR}/env"
+
   network::start
   cluster::configure
+
+  export KUBECONFIG="${HOME}/.kube/${CLUSTER}"
   addon::sys
 }
 

@@ -78,6 +78,11 @@ utils::wait_ip() {
   done
 }
 
+utils::wait_for_net() {
+  dumpstack
+  while ! ping -c1 www.google.com &>/dev/null; do sleep 1; done
+}
+
 utils::export_vm() {
   vm::assert_vm
 

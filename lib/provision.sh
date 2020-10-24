@@ -51,8 +51,7 @@ provision::base() {
   dumpstack "$*"
   utils::export_vm
 
-  # Check connectivity - DANGER!
-  while ! ping -c1 www.google.com &>/dev/null; do :; done
+  utils::wait_for_net
 
   if [[ "$1" != "-skipapt" ]]; then
     # Update/upgrade + essentials

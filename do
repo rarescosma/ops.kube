@@ -54,6 +54,7 @@ start() {
 
   network::start
   cluster::configure
+  addon::sys
 }
 
 stop() {

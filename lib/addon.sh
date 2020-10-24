@@ -22,7 +22,7 @@ addon() {
     -f "${TPL}/addons/${addon}.yaml"
 }
 
-addon::essentials() {
+addon::sys() {
   addon registry
   addon_tpl coredns
   addon_tpl ingress

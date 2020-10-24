@@ -2,6 +2,7 @@
 
 network::cycle() {
   dumpstack "$*"
+  utils::wait_ip "${LXD_BRIDGE}"
   network::stop
   network::start
 }

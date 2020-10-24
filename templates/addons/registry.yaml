@@ -4,16 +4,16 @@ metadata:
   name: registry
   namespace: sys
   labels:
-    k8s-app: kube-docker-registry
+    k8s-app: registry
     version: v0
 spec:
   selector:
     matchLabels:
-      k8s-app: kube-docker-registry
+      k8s-app: registry
   template:
     metadata:
       labels:
-        k8s-app: kube-docker-registry
+        k8s-app: registry
         version: v0
     spec:
       containers:
@@ -40,14 +40,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: kube-docker-registry
+  name: registry
   namespace: sys
   labels:
-    k8s-app: kube-docker-registry
+    k8s-app: registry
 spec:
   type: NodePort
   selector:
-    k8s-app: kube-docker-registry
+    k8s-app: registry
   ports:
     - port: 5000
       name: http

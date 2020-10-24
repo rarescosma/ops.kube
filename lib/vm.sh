@@ -58,10 +58,10 @@ vm::create_base_image() {
 vm::discover() {
   dumpstack "$*"
   local tag what nodes
-  tag="${1}-${2}"
-  what=${3:-"ids"}
+  tag="${1}[0-9]+-${CLUSTER}"
+  what=${2:-"ids"}
 
-  nodes=$(lxc list -c n | grep -- "${tag}" | cut -d" " -f2)
+  nodes=$(lxc list -c n | grep -E -- "${tag}" | cut -d" " -f2)
 
   case $what in
   "ips")

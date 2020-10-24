@@ -12,7 +12,7 @@ orchestrate::main() {
 orchestrate::master() {
   dumpstack "$*"
   local index=${1:-"0"}
-  local vm="${CLUSTER}-master${index}"
+  local vm="master${index}-${CLUSTER}"
   local envvar
   envvar=$(utils::to_upper "master${index}_ip")
   local ip gw api_ip dns_ip
@@ -34,7 +34,7 @@ orchestrate::master() {
 orchestrate::worker() {
   dumpstack "$*"
   local index=${1:-"0"}
-  local vm="${CLUSTER}-worker${index}"
+  local vm="worker${index}-${CLUSTER}"
 
   vm::create "$vm"
   vm::exec "$vm" provision::worker

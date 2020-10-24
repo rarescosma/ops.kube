@@ -9,7 +9,7 @@ ExecStart=/kube/bin/etcd --name ${VM_HOST} \
   --listen-client-urls http://${VM_IP}:2379,http://127.0.0.1:2379 \
   --advertise-client-urls http://${VM_IP}:2379 \
   --initial-cluster-token etcd-cluster-0 \
-  --initial-cluster ${CLUSTER}-master0=http://${MASTER0_IP}:2380 \
+  --initial-cluster master0-${CLUSTER}=http://${MASTER0_IP}:2380 \
   --initial-cluster-state new \
   --data-dir=/var/lib/etcd
 Restart=on-failure

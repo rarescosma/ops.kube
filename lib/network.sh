@@ -21,7 +21,7 @@ network::start() {
   local pod_cidr worker_ip our_worker_ip
 
   # Find all worker IPs
-  for worker_ip in $(vm::discover '' worker ips); do
+  for worker_ip in $(vm::discover worker ips); do
     pod_cidr=$(network::pod_cidr "$worker_ip")
     sudo ip route add "$pod_cidr" via "$worker_ip" || true
   done
@@ -32,7 +32,7 @@ network::stop() {
   dumpstack "$*"
   local pod_cidr our_worker_ip
 
-  for our_worker_ip in $(vm::discover "$CLUSTER" worker ips); do
+  for our_worker_ip in $(vm::discover worker ips); do
     pod_cidr=$(network::pod_cidr "$our_worker_ip")
     sudo ip route del "$pod_cidr" &>/dev/null || true
   done
@@ -40,7 +40,7 @@ network::stop() {
 }
 
 _network::service_hops() {
-  for our_worker_ip in $(vm::discover "$CLUSTER" worker ips); do
+  for our_worker_ip in $(vm::discover worker ips); do
     echo -n "nexthop via ${our_worker_ip} dev ${LXD_BRIDGE} weight 1 "
   done
 }

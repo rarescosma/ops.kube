@@ -2,6 +2,10 @@
 
 host::prepare() {
   dumpstack "$*"
+  _host::wait_for_lxd
+}
+
+_host::wait_for_lxd() {
   local lxd_unit
 
   if [ -x "$(command -v snap)" ]; then
@@ -24,6 +28,7 @@ host::prepare() {
 host::start() {
   _restore_resolvconf
   utils::wait_for_net
+  _host::wait_for_lxd
   orchestrate::main
   network::cycle
   _mangle_resolvconf

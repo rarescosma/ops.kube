@@ -53,9 +53,16 @@ data:
         fallthrough in-addr.arpa ip6.arpa
       }
     }
+    ${LXD_DOMAIN}:53 {
+      log
+      rewrite stop {
+        name regex (.*).${ASSCAPED_LXD_DOMAIN} {1}
+        answer name (.*) {1}${LXD_DOMAIN}
+      }
+      forward . ${DNSMASQ_IP}
+    }
     .:53 {
-        health
-        forward . 8.8.8.8 
+      forward . 8.8.8.8
     }
 ---
 apiVersion: apps/v1

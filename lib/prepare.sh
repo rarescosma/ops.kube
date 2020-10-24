@@ -55,7 +55,7 @@ prepare::tls() {
 
   [ -f "$auth_dir/kubernetes.pem" ] && return
 
-  export KUBE_SERVICE_CLUSTER_IP="$(utils::service_ip "$SERVICE_CIDR")"
+  export KUBE_SERVICE_CLUSTER_IP="$(utils::service_ip "$SERVICE_CIDR").1"
 
   cd "$auth_dir" || exit
   cfssl gencert -initca "${tpl_dir}/tls-ca-csr.json" | cfssljson -bare tls-ca

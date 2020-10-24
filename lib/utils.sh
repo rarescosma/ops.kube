@@ -110,7 +110,7 @@ utils::replace_line_by_prefix() {
 
 utils::service_ip() {
   local service_subnet="$1"
-  echo "$service_subnet" | sed -r 's/(.*)\.[[:digit:]]+\/[[:digit:]]+/\1.1/'
+  echo "$service_subnet" | sed -r 's/(.*)\.[[:digit:]]+\/[[:digit:]]+/\1/'
 }
 
 utils::function_exists() {

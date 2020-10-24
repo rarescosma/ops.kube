@@ -20,8 +20,8 @@ orchestrate::master() {
   vm::create "$vm"
   ip=$(vm::exec "$vm" utils::wait_ip)
   gw=$(vm::exec "$vm" network::gateway)
-  api_ip="$(utils::service_ip "$SERVICE_CIDR")"
-  dns_ip="$(utils::service_ip "$SERVICE_CIDR")00"
+  api_ip="$(utils::service_ip "$SERVICE_CIDR").1"
+  dns_ip="$(utils::service_ip "$SERVICE_CIDR").100"
 
   utils::replace_line_by_prefix "${OUT_DIR}/env" "$envvar" "=\"${ip}\""
   utils::replace_line_by_prefix "${OUT_DIR}/env" "DNSMASQ_IP" "=\"${gw}\""

@@ -32,6 +32,7 @@ host::stop() {
 }
 
 host::kube_route() {
+  _restore_resolvconf
   utils::wait_for_net
   network::cycle
   _mangle_resolvconf

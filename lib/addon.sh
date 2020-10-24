@@ -18,7 +18,8 @@ addon() {
   local addon
   addon="${1}"
   kubectl apply \
-    -f "$TPL/addons/${addon}.yaml"
+    -f "${TPL}/addons/sys-ns.yaml" \
+    -f "${TPL}/addons/${addon}.yaml"
 }
 
 addon::essentials() {

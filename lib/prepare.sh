@@ -53,7 +53,7 @@ prepare::tls() {
   tpl_dir="${TPL}/auth"
   mkdir -p "$auth_dir"
 
-  [ -f "$auth_dir/kubernetes.pem" ] && return
+  [ -f "$auth_dir/tls-kubernetes.pem" ] && return
 
   export KUBE_SERVICE_CLUSTER_IP="$(utils::service_ip "$SERVICE_CIDR").1"
 

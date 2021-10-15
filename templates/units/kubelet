@@ -19,7 +19,8 @@ ExecStart=/kube/bin/kubelet \
   --tls-private-key-file=/kube/auth/tls-kubernetes-key.pem \
   --fail-swap-on=false \
   --volume-stats-agg-period=0 \
-  --housekeeping-interval=60s
+  --housekeeping-interval=60s \
+  --eviction-hard="imagefs.available<1Gi"
 
 Restart=on-failure
 RestartSec=5

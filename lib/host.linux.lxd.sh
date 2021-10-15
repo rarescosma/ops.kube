@@ -66,3 +66,34 @@ _add_k8s_zone_to_dnsmasq() {
   echo -e "server=/${CLUSTER_DOMAIN}/${coredns_ip}" \
   | lxc network set "${LXD_BRIDGE}" raw.dnsmasq -
 }
+
+_setup_lb() {
+  (
+    cat << __EOF__
+worker_processes auto;
+
+events {
+  worker_connections 768;
+  multi_accept on;
+}
+
+stream {
+  server {
+    listen 0.0.0.0:80;
+    proxy_pass workers;
+    proxy_protocol on;
+    proxy_protocol_timeout 2s;
+  }
+  upstream workers {
+__EOF__
+    for worker_ip in $(vm::discover worker ips); do
+      echo "    server ${worker_ip}:10080 fail_timeout=2s;"
+    done
+
+    cat << __EOF__
+    random;
+  }
+}
+__EOF__
+  ) | sudo tee /etc/nginx/nginx.conf
+}

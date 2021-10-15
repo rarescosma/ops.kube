@@ -20,17 +20,19 @@ network::start() {
   dumpstack "$*"
   local pod_cidr worker_ip our_worker_ip
 
+  # Delete obsolete routes
+  network::stop
+
   # Find all worker IPs
   for worker_ip in $(vm::discover worker ips); do
     pod_cidr=$(network::pod_cidr "$worker_ip")
     sudo ip route add "$pod_cidr" via "$worker_ip" || true
   done
-  sudo ip route add "${SERVICE_CIDR}" $(_network::service_hops)
+  sudo ip route add "${SERVICE_CIDR}" $(_network::service_hops) || true
 }
 
 network::stop() {
   dumpstack "$*"
-  local pod_cidr our_worker_ip
 
   ip route | grep -E "lxdbr0\s?$" \
   | cut -d" " -f1 \

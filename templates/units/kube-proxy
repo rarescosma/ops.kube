@@ -7,6 +7,7 @@ ExecStart=/kube/bin/kube-proxy \
   --master=http://${MASTER0_IP}:8080 \
   --kubeconfig=/kube/auth/kubelet_kubeconfig \
   --proxy-mode=iptables \
+  --conntrack-max-per-core=0 \
   --masquerade-all \
   --v=2
 

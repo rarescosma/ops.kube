@@ -7,6 +7,7 @@ Requires=containerd.service
 [Service]
 ExecStartPre=/bin/ln -sf /dev/console /dev/kmsg
 ExecStart=/kube/bin/kubelet \
+  --root-dir=/var/lib/turtles/kubelet-${VM_HOST} \
   --logtostderr=true \
   --v=4 \
   --port=10250 \

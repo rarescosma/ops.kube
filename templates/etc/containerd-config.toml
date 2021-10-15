@@ -1,4 +1,5 @@
 version = 2
+root = "/var/lib/turtles/containerd-${VM_HOST}"
 
 [plugins."io.containerd.grpc.v1.cri"]
   [plugins."io.containerd.grpc.v1.cri".containerd]

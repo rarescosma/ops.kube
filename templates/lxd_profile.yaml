@@ -23,6 +23,10 @@ devices:
     path: /kube
     source: ${OUT_DIR}
     type: disk
+  turtles:
+    path: /var/lib/turtles
+    source: ${OUT_DIR}/turtles
+    type: disk
   tuntap:
     path: /dev/net/tun
     type: unix-char

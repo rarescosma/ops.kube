@@ -55,8 +55,9 @@ __EOF__
 _restore_resolvconf() {
   sudo chattr -i /etc/resolv.conf
   cat << __EOF__ | sudo tee /etc/resolv.conf
-nameserver 8.8.8.8
+nameserver 127.0.0.1
 __EOF__
+  sudo chattr +i /etc/resolv.conf
 }
 
 _add_k8s_zone_to_dnsmasq() {

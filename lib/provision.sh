@@ -72,14 +72,12 @@ provision::base() {
 
 provision::setup_units() {
   dumpstack "$*"
-  local unit_dir out_dir
+  local unit_dir
   unit_dir="${TPL}/units"
-  out_dir="${OUT_DIR}/units"
-  mkdir -p "${out_dir}"
 
   for unit in "$@"; do
-    utils::template "${unit_dir}/${unit}" > "${out_dir}/${unit}.service"
-    ln -sf "${out_dir}/${unit}.service" /etc/systemd/system/
+    rm -f "/etc/systemd/system/${unit}.service"
+    utils::template "${unit_dir}/${unit}" > "/etc/systemd/system/${unit}.service"
   done
 
   systemctl daemon-reload

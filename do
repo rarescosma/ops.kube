@@ -13,8 +13,9 @@ OUT_DIR="${PREFIX:-${HOME}}/kube/${CLUSTER}"
 VM_HOST=$(hostname -s)
 CLUSTER_DOMAIN="k8s.local"
 LXD_DOMAIN="lxd.local"
+DEFAULT_DNS="10.0.40.25"
 
-export DOT TPL OUT_DIR VM_HOST CLUSTER_DOMAIN LXD_DOMAIN
+export DOT TPL OUT_DIR VM_HOST CLUSTER_DOMAIN LXD_DOMAIN DEFAULT_DNS
 
 # shellcheck source=./lib/log.sh
 source "$DOT/lib/utils.sh"

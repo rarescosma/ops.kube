@@ -5,7 +5,7 @@ After=containerd.service
 Requires=containerd.service
 
 [Service]
-ExecStartPre=/bin/ln -sf /dev/console /dev/kmsg
+ExecStartPre=/bin/ln -sf /dev/null /dev/kmsg
 ExecStart=/kube/bin/kubelet \
   --root-dir=/var/lib/turtles/kubelet-${VM_HOST} \
   --logtostderr=true \

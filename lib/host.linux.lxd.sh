@@ -26,18 +26,22 @@ _host::wait_for_lxd() {
 }
 
 host::start() {
+  utils::function_exists hooks::pre_start && hooks::pre_start
   _restore_resolvconf
   utils::wait_for_net
   _host::wait_for_lxd
   orchestrate::main
   network::cycle
   _mangle_resolvconf
+  utils::function_exists hooks::post_start && hooks::post_start
 }
 
 host::stop() {
+  utils::function_exists hooks::pre_stop && hooks::pre_stop
   dumpstack "$*"
   _restore_resolvconf
   cluster::stop
+  utils::function_exists hooks::post_stop && hooks::post_stop
 }
 
 _mangle_resolvconf() {

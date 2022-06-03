@@ -31,6 +31,10 @@ load_env "${OUT_DIR}/config" "/kube/config" "${OUT_DIR}/env" "/kube/env"
 # shellcheck source=/dev/null
 source "$DOT/lib/cluster.sh"
 # shellcheck source=/dev/null
+if test -f "${OUT_DIR}/hooks.sh"; then
+  source "${OUT_DIR}/hooks.sh"
+fi
+# shellcheck source=/dev/null
 if test -f "${DOT}/lib/host.${KUBE_HOST}.sh"; then
   source "${DOT}/lib/host.${KUBE_HOST}.sh"
 fi

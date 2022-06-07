@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    app.kubernetes.io/version: 0.40.2
+    app.kubernetes.io/version: 1.2.0
   name: ingress-nginx
   namespace: sys
 ---
@@ -10,7 +10,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   labels:
-    app.kubernetes.io/version: 0.40.2
+    app.kubernetes.io/version: 1.2.0
   name: ingress-nginx
   namespace: sys
 data:
@@ -20,7 +20,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/version: 0.40.2
+    app.kubernetes.io/version: 1.2.0
   name: ingress-nginx
 rules:
   - apiGroups:
@@ -34,6 +34,7 @@ rules:
     verbs:
       - list
       - watch
+      - update
   - apiGroups:
       - ''
     resources:
@@ -85,7 +86,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app.kubernetes.io/version: 0.40.2
+    app.kubernetes.io/version: 1.2.0
   name: ingress-nginx
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -100,7 +101,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    app.kubernetes.io/version: 0.40.2
+    app.kubernetes.io/version: 1.2.0
   name: ingress-nginx
   namespace: sys
 rules:
@@ -189,7 +190,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    app.kubernetes.io/version: 0.40.2
+    app.kubernetes.io/version: 1.2.0
   name: ingress-nginx
   namespace: sys
 roleRef:
@@ -205,7 +206,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
-    app.kubernetes.io/version: 0.40.2
+    app.kubernetes.io/version: 1.2.0
   name: ingress-nginx
   namespace: sys
 spec:
@@ -222,7 +223,7 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: controller
-          image: k8s.gcr.io/ingress-nginx/controller:v0.40.2@sha256:46ba23c3fbaafd9e5bd01ea85b2f921d9f2217be082580edc22e6c704a83f02f
+          image: k8s.gcr.io/ingress-nginx/controller:v1.2.0@sha256:d8196e3bc1e72547c5dec66d6556c0ff92a23f6d0919b206be170bc90d5f9185
           imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:
@@ -292,7 +293,7 @@ kind: Service
 metadata:
   annotations:
   labels:
-    app.kubernetes.io/version: 0.40.2
+    app.kubernetes.io/version: 1.2.0
   name: ingress-nginx
   namespace: sys
 spec:

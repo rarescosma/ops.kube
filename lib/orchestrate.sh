@@ -24,7 +24,7 @@ orchestrate::master() {
   ip=$(vm::exec "$vm" utils::wait_ip)
   gw=$(vm::exec "$vm" network::gateway)
   api_ip="$(utils::service_ip "$SERVICE_CIDR").1"
-  dns_ip="$(utils::service_ip "$SERVICE_CIDR").100"
+  dns_ip="$(dns::get_ip)"
 
   utils::replace_line_by_prefix "${OUT_DIR}/env" "$envvar" "=\"${ip}\""
   utils::replace_line_by_prefix "${OUT_DIR}/env" "DNSMASQ_IP" "=\"${gw}\""

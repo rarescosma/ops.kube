@@ -8,9 +8,6 @@ V_CONTAINERD="1.4.1"
 V_RUNC="1.0.0-rc91"
 V_KUBE="1.19.3"
 
-# =Persistence
-KUBE_HOST="linux.lxd"
-
 # =Orchestrate
 #
 # The "orchestrate" stage uses the lxd runtime to manage the lifecycle

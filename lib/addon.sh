@@ -3,7 +3,7 @@
 addon_tpl() {
   local addon
   addon="${1}"
-  export KUBE_DNS_IP="$(utils::dns_ip)"
+  export KUBE_DNS_IP="$(dns::get_ip)"
   export ASSCAPED_LXD_DOMAIN="${LXD_DOMAIN/\./\\.}"
 
   mkdir -p "${OUT_DIR}/.manifests"

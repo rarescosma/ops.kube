@@ -83,16 +83,6 @@ utils::wait_for_net() {
   while ! ping -c1 www.google.com &>/dev/null; do sleep 1; done
 }
 
-utils::wait_for_dns() {
-  dumpstack
-  local dns_ip=$(utils::dns_ip)
-  echo -n "Waiting for Kube DNS."
-  while ! dig svc.k8s.local +timeout=1 @${dns_ip} >/dev/null 2>&1; do
-    echo -n "."
-  done
-  echo
-}
-
 utils::export_vm() {
   vm::assert_vm
 
@@ -128,10 +118,56 @@ utils::service_ip() {
   echo "$service_subnet" | sed -r 's/(.*)\.[[:digit:]]+\/[[:digit:]]+/\1/'
 }
 
-utils::dns_ip() {
-  echo "$(utils::service_ip "$SERVICE_CIDR").100"
-}
-
 utils::function_exists() {
   [ -n "$(type -t "$1")" ] && [ "$(type -t "$1")" = function ]
+}
+
+utils::wait_for_lxd() {
+  local lxd_unit
+
+  if [ -x "$(command -v snap)" ]; then
+    lxd_unit="snap.lxd.daemon"
+  else
+    lxd_unit="lxd"
+  fi
+
+  # restart lxd and wait for it
+  sudo systemctl is-active --quiet ${lxd_unit} || {
+    sudo systemctl restart ${lxd_unit}
+    while true; do
+      lxc list 1>/dev/null && break
+      sleep 1
+    done
+  }
+}
+
+utils::setup_lb() {
+  (
+    cat << __EOF__
+worker_processes auto;
+
+events {
+  worker_connections 768;
+  multi_accept on;
+}
+
+stream {
+  server {
+    listen 0.0.0.0:80;
+    proxy_pass workers;
+    proxy_protocol on;
+    proxy_protocol_timeout 2s;
+  }
+  upstream workers {
+__EOF__
+    for worker_ip in $(vm::discover worker ips); do
+      echo "    server ${worker_ip}:10080 fail_timeout=2s;"
+    done
+
+    cat << __EOF__
+    random;
+  }
+}
+__EOF__
+  ) | sudo tee /etc/nginx/nginx.conf
 }

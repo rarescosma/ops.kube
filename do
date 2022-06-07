@@ -35,13 +35,11 @@ if test -f "${OUT_DIR}/hooks.sh"; then
   source "${OUT_DIR}/hooks.sh"
 fi
 # shellcheck source=/dev/null
-if test -f "${DOT}/lib/host.${KUBE_HOST}.sh"; then
-  source "${DOT}/lib/host.${KUBE_HOST}.sh"
-fi
-# shellcheck source=/dev/null
 source "$DOT/lib/prepare.sh"
 # shellcheck source=/dev/null
 source "$DOT/lib/network.sh"
+# shellcheck source=/dev/null
+source "$DOT/lib/dns.sh"
 # shellcheck source=/dev/null
 source "$DOT/lib/orchestrate.sh"
 # shellcheck source=/dev/null
@@ -59,6 +57,10 @@ start() {
   utils::function_exists hooks::pre_start && hooks::pre_start
   set -e
 
+  dns::restore_resolvconf
+  utils::wait_for_net
+  utils::wait_for_lxd
+
   utils::function_exists "host::prepare" && host::prepare
 
   prepare
@@ -74,9 +76,9 @@ start() {
   export KUBECONFIG="${HOME}/.kube/${CLUSTER}"
   addon::sys
 
-  utils::wait_for_dns
-  _add_k8s_zone_to_dnsmasq
-  _mangle_resolvconf
+  dns::wait_for_coredns
+  dns::add_k8s_zone_to_dnsmasq
+  dns::mangle_resolvconf
 
   # restart worker units so they pick up on DNS
   orchestrate::workers
@@ -97,7 +99,7 @@ stop() {
 
   network::stop
   cluster::stop
-  _restore_resolvconf
+  dns::restore_resolvconf
 
   # run cluster-specific hook, accept errors
   set +e

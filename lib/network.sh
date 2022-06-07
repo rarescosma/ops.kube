@@ -24,7 +24,7 @@ network::start() {
   network::stop
 
   # Find all worker IPs
-  for worker_ip in $(vm::discover worker ips); do
+  for worker_ip in $(vm::discover worker ips; vm::discover master ips); do
     pod_cidr=$(network::pod_cidr "$worker_ip")
     sudo ip route add "$pod_cidr" via "$worker_ip" || true
   done
@@ -42,7 +42,7 @@ network::stop() {
 }
 
 _network::service_hops() {
-  for our_worker_ip in $(vm::discover worker ips); do
+  for our_worker_ip in $(vm::discover worker ips; vm::discover master ips); do
     echo -n "nexthop via ${our_worker_ip} dev ${LXD_BRIDGE} weight 1 "
   done
 }

@@ -1,20 +1,23 @@
 #!/usr/bin/env bash
 
 orchestrate::main() {
-  orchestrate::master 0
+  local master_vm
+  master_vm="master0-${CLUSTER}"
+  orchestrate::master "$master_vm"
 
-  for x in $(seq 0 $((VM_NUM_WORKERS-1))); do
-    orchestrate::worker "$x" &
-  done
-  wait
+  orchestrate::workers
+
+  # yep, we're making the master work as well
+  vm::exec "$master_vm" provision::worker is_master
 }
 
 orchestrate::master() {
   dumpstack "$*"
-  local index=${1:-"0"}
-  local vm="master${index}-${CLUSTER}"
-  local envvar
-  envvar=$(utils::to_upper "master${index}_ip")
+  local vm_name vm envvar
+  vm=${1}
+  vm_name=$(echo $vm | cut -d"-" -f 1)
+  envvar=$(utils::to_upper "${vm_name}_ip")
+
   local ip gw api_ip dns_ip
 
   vm::create "$vm"
@@ -31,10 +34,18 @@ orchestrate::master() {
   vm::exec "$vm" provision::master
 }
 
-orchestrate::worker() {
+orchestrate::workers() {
+  local worker_wm
+  for x in $(seq 0 $((VM_NUM_WORKERS-1))); do
+    worker_vm="worker${x}-${CLUSTER}"
+    orchestrate::vm "$worker_vm" &
+  done
+  wait
+}
+
+orchestrate::vm() {
   dumpstack "$*"
-  local index=${1:-"0"}
-  local vm="worker${index}-${CLUSTER}"
+  local vm=${1}
 
   vm::create "$vm"
   vm::exec "$vm" provision::worker

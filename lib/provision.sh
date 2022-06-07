@@ -19,6 +19,10 @@ provision::worker() {
   dumpstack "$*"
   utils::export_vm
 
+  if [[ "$1" == "is_master" ]]; then
+    export KUBELET_ARGS="--register-with-taints=node-role.kubernetes.io/master=master:NoSchedule --node-labels=node_role=master"
+  fi
+
   provision::resolv_conf "$(network::gateway)"
   provision::base -skipapt
 
@@ -33,6 +37,8 @@ provision::worker() {
   utils::template "${TPL}/etc/containerd-config.toml" > "/etc/containerd/config.toml"
 
   provision::setup_units ${WORKER_UNITS}
+
+  unset KUBELET_ARGS
 }
 
 provision::resolv_conf() {

@@ -21,7 +21,7 @@ ExecStart=/kube/bin/kubelet \
   --fail-swap-on=false \
   --volume-stats-agg-period=0 \
   --housekeeping-interval=60s \
-  --eviction-hard="imagefs.available<1Gi"
+  --eviction-hard="imagefs.available<1Gi" ${KUBELET_ARGS}
 
 Restart=on-failure
 RestartSec=5

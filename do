@@ -117,7 +117,8 @@ clean() {
   stop
 
   # Clean prepare stage
-  rm -rf "${OUT_DIR:?}/bin/*"
+  rm -rf "${OUT_DIR:?}/bin"
+  rm -rf "${OUT_DIR:?}/.done"
 
   cluster::clean
   utils::function_exists "vm::clean" && vm::clean

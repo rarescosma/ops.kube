@@ -87,10 +87,15 @@ spec:
       labels:
         k8s-app: coredns
     spec:
+      nodeSelector:
+        node_role: master
       serviceAccountName: coredns
       tolerations:
         - key: "CriticalAddonsOnly"
           operator: "Exists"
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
       containers:
       - name: coredns
         image: coredns/coredns:1.7.1

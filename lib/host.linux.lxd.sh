@@ -46,7 +46,7 @@ host::stop() {
 
 _mangle_resolvconf() {
   local coredns_ip
-  coredns_ip="$(utils::service_ip "$SERVICE_CIDR").100"
+  coredns_ip="$(utils::dns_ip)"
 
   sudo chattr -i /etc/resolv.conf
   cat << __EOF__ | sudo tee /etc/resolv.conf
@@ -66,7 +66,7 @@ __EOF__
 
 _add_k8s_zone_to_dnsmasq() {
   local coredns_ip
-  coredns_ip="$(utils::service_ip "$SERVICE_CIDR").100"
+  coredns_ip="$(utils::dns_ip)"
   echo -e "server=/${CLUSTER_DOMAIN}/${coredns_ip}" \
   | lxc network set "${LXD_BRIDGE}" raw.dnsmasq -
 }

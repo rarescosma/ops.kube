@@ -118,6 +118,10 @@ utils::service_ip() {
   echo "$service_subnet" | sed -r 's/(.*)\.[[:digit:]]+\/[[:digit:]]+/\1/'
 }
 
+utils::dns_ip() {
+  echo "$(utils::service_ip "$SERVICE_CIDR").100"
+}
+
 utils::function_exists() {
   [ -n "$(type -t "$1")" ] && [ "$(type -t "$1")" = function ]
 }

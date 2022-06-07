@@ -14,7 +14,7 @@ dns::wait_for_coredns() {
   echo
 }
 
-dns::mangle_resolvconf() {
+dns::configure_resolvconf() {
   local coredns_ip
   coredns_ip="$(dns::get_ip)"
 
@@ -34,7 +34,7 @@ __EOF__
   sudo chattr +i /etc/resolv.conf
 }
 
-dns::add_k8s_zone_to_dnsmasq() {
+dns::configure_lxc_network() {
   local coredns_ip
   coredns_ip="$(dns::get_ip)"
   echo -e "server=/${CLUSTER_DOMAIN}/${coredns_ip}" \

@@ -22,6 +22,7 @@ prepare() {
   dumpstack "$*"
   prepare::bin
   prepare::tls
+  prepare::lxd
 }
 
 prepare::bin() {
@@ -70,4 +71,24 @@ prepare::tls() {
     "${auth_dir}/tls-kube-csr.json" | cfssljson -bare tls-kubernetes
 
   cd - || exit
+}
+
+prepare::lxd() {
+  dumpstack
+  local lxd_unit
+
+  if [ -x "$(command -v snap)" ]; then
+    lxd_unit="snap.lxd.daemon"
+  else
+    lxd_unit="lxd"
+  fi
+
+  # restart lxd and wait for it
+  sudo systemctl is-active --quiet ${lxd_unit} || {
+    sudo systemctl restart ${lxd_unit}
+    while true; do
+      lxc list 1>/dev/null && break
+      sleep 1
+    done
+  }
 }

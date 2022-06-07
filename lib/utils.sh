@@ -66,7 +66,7 @@ utils::get_ip() {
   | sed 's/[^0-9.]*//g'
 }
 
-utils::wait_ip() {
+utils::wait_for_ip() {
   dumpstack "${VM_IFACE}"
   local ip
   while true; do
@@ -87,7 +87,7 @@ utils::export_vm() {
   vm::assert_vm
 
   VM_HOST=$(hostname -s)
-  VM_IP=$(utils::wait_ip)
+  VM_IP=$(utils::wait_for_ip)
   OUT_DIR="/kube"
 
   export VM_HOST VM_IP OUT_DIR
@@ -122,25 +122,6 @@ utils::function_exists() {
   [ -n "$(type -t "$1")" ] && [ "$(type -t "$1")" = function ]
 }
 
-utils::wait_for_lxd() {
-  local lxd_unit
-
-  if [ -x "$(command -v snap)" ]; then
-    lxd_unit="snap.lxd.daemon"
-  else
-    lxd_unit="lxd"
-  fi
-
-  # restart lxd and wait for it
-  sudo systemctl is-active --quiet ${lxd_unit} || {
-    sudo systemctl restart ${lxd_unit}
-    while true; do
-      lxc list 1>/dev/null && break
-      sleep 1
-    done
-  }
-}
-
 utils::setup_lb() {
   (
     cat << __EOF__
@@ -170,4 +151,13 @@ __EOF__
 }
 __EOF__
   ) | sudo tee /etc/nginx/nginx.conf
+}
+
+utils::wait_for_master() {
+  dumpstack
+
+  while ! kubectl get node master0-${CLUSTER} 2>/dev/null; do
+    sleep 1
+  done
+  kubectl wait --for=condition=Ready node/master0-${CLUSTER}
 }

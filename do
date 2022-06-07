@@ -59,29 +59,33 @@ start() {
 
   dns::restore_resolvconf
   utils::wait_for_net
-  utils::wait_for_lxd
-
-  utils::function_exists "host::prepare" && host::prepare
 
   prepare
   utils::function_exists "vm::prepare" && vm::prepare
-  orchestrate::main
+
+  # master goes first
+  orchestrate::master
 
   # reload dynamic environment after orchestration
   load_env "${OUT_DIR}/env"
 
+  # we should get kubectl access after this
   network::cycle
   cluster::configure
-
   export KUBECONFIG="${HOME}/.kube/${CLUSTER}"
+
+  # deploy system addons (including CoreDNS)
+  utils::wait_for_master
   addon::sys
 
+  # wait for DNS, then mangle resolv.conf and re-configure the lxc dnsmasq
   dns::wait_for_coredns
-  dns::add_k8s_zone_to_dnsmasq
-  dns::mangle_resolvconf
+  dns::configure_lxc_network
+  dns::configure_resolvconf
 
-  # restart worker units so they pick up on DNS
+  # finally - boot up regular worker Joes
   orchestrate::workers
+  network::cycle
 
   # run cluster-specific hook, accept errors
   set +e

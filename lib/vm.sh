@@ -78,7 +78,7 @@ vm::discover() {
 vm::exec() {
   dumpstack "$*"
   local vm=$1; shift
-  lxc exec "$vm" -- /ops.kube/do "${CLUSTER}" "$@"
+  lxc exec "$vm" --env OUT_DIR=/kube -- /ops.kube/do "${CLUSTER}" "$@"
 }
 
 vm::assert_vm() {

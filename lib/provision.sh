@@ -10,7 +10,8 @@ provision::master() {
   provision::resolv_conf "$(network::gateway)"
   provision::base -skipapt
 
-  utils::template "${TPL}/auth/token.csv" > "${OUT_DIR}/auth/token.csv"
+  mkdir -p /kube/konfig
+  utils::template "${TPL}/konfig/kube-scheduler.yaml" > "/kube/konfig/kube-scheduler.yaml"
 
   provision::setup_units ${MASTER_UNITS}
 }
@@ -26,12 +27,20 @@ provision::worker() {
   provision::resolv_conf "$(network::gateway)"
   provision::base -skipapt
 
+  mkdir -p /etc/cni/net.d /etc/containerd /kube/konfig
+
   POD_CIDR=$(network::pod_cidr "$VM_IP")
   export POD_CIDR
 
-  utils::template "${TPL}/auth/kubeconfig_kubelet" > "${OUT_DIR}/auth/kubelet_kubeconfig"
+  auth::make_cert kubelet $VM_HOST
+  auth::make_kubeconfig ${VM_HOST} system:node:${VM_HOST} ${MASTER0_IP}
 
-  mkdir -p /etc/cni/net.d /etc/containerd
+  auth::make_cert kube-proxy kube-proxy
+  auth::make_kubeconfig kube-proxy system:kube-proxy ${MASTER0_IP}
+
+  utils::template "${TPL}/konfig/kubelet.yaml" > "/kube/konfig/${VM_HOST}.yaml"
+  utils::template "${TPL}/konfig/kube-proxy.yaml" > "/kube/konfig/kube-proxy.yaml"
+
   utils::template "${TPL}/etc/cni-10-bridge.conf" > "/etc/cni/net.d/10-bridge.conf"
   utils::template "${TPL}/etc/cni-99-loopback.conf" > "/etc/cni/net.d/99-loopback.conf"
   utils::template "${TPL}/etc/containerd-config.toml" > "/etc/containerd/config.toml"
@@ -63,7 +72,9 @@ provision::base() {
     # Update/upgrade + essentials
     apt update
     apt -y full-upgrade
-    apt -y install curl wget iptables software-properties-common ncdu htop socat conntrack net-tools
+    apt -y install \
+      curl wget iptables software-properties-common ncdu htop \
+      socat conntrack net-tools golang-cfssl
   fi
 
   # Profile / aliases / etc.

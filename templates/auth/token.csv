@@ -1,3 +1,0 @@
-${SECRET_TOKEN},admin,admin
-${SECRET_TOKEN},scheduler,scheduler
-${SECRET_TOKEN},kubelet,kubelet

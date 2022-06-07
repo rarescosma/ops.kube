@@ -4,26 +4,27 @@ Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
 ExecStart=/kube/bin/kube-apiserver \
-  --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota,PodPreset \
   --advertise-address=${VM_IP} \
   --allow-privileged=true \
   --apiserver-count=1 \
-  --authorization-mode=RBAC \
+  --authorization-mode=Node,RBAC \
   --bind-address=0.0.0.0 \
-  --enable-swagger-ui=true \
-  --etcd-cafile=/kube/auth/tls-ca.pem \
-  --insecure-bind-address=0.0.0.0 \
-  --insecure-port=8080 \
-  --kubelet-certificate-authority=/kube/auth/tls-ca.pem \
+  --client-ca-file=/kube/auth/ca.pem \
+  --enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
   --etcd-servers=http://127.0.0.1:2379 \
-  --service-account-key-file=/kube/auth/tls-kubernetes-key.pem \
+  --event-ttl=1h \
+  --kubelet-certificate-authority=/kube/auth/ca.pem \
+  --kubelet-client-certificate=/kube/auth/kubernetes.pem \
+  --kubelet-client-key=/kube/auth/kubernetes-key.pem \
+  --runtime-config='api/all=true' \
+  --service-account-key-file=/kube/auth/service-account.pem \
+  --service-account-signing-key-file=/kube/auth/service-account-key.pem \
+  --service-account-issuer=https://${VM_IP}:6443 \
   --service-cluster-ip-range=${SERVICE_CIDR} \
   --service-node-port-range=5000-32767 \
-  --tls-cert-file=/kube/auth/tls-kubernetes.pem \
-  --tls-private-key-file=/kube/auth/tls-kubernetes-key.pem \
-  --token-auth-file=/kube/auth/token.csv \
-  --v=2 \
-  --runtime-config=settings.k8s.io/v1alpha1
+  --tls-cert-file=/kube/auth/kubernetes.pem \
+  --tls-private-key-file=/kube/auth/kubernetes-key.pem \
+  --v=2
 Restart=on-failure
 RestartSec=5
 

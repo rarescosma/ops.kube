@@ -54,21 +54,29 @@ prepare::tls() {
   tpl_dir="${TPL}/auth"
   mkdir -p "$auth_dir"
 
-  [ -f "$auth_dir/tls-kubernetes.pem" ] && return
+  [ -f "$auth_dir/kubernetes.pem" ] && return
 
   export KUBE_SERVICE_CLUSTER_IP="$(utils::service_ip "$SERVICE_CIDR").1"
 
+  # CA
   cd "$auth_dir" || exit
-  cfssl gencert -initca "${tpl_dir}/tls-ca-csr.json" | cfssljson -bare tls-ca
+  cfssl gencert -initca "${tpl_dir}/ca-csr.json" | cfssljson -bare ca
 
-  utils::template "${tpl_dir}/tls-kube-csr.json" > "${auth_dir}/tls-kube-csr.json"
+  # admin client cert + kubeconfig
+  auth::make_cert admin admin
+  auth::make_kubeconfig admin admin
 
-  cfssl gencert \
-    -ca=tls-ca.pem \
-    -ca-key=tls-ca-key.pem \
-    -config="${TPL}/auth/tls-ca-config.json" \
-    -profile=kubernetes \
-    "${auth_dir}/tls-kube-csr.json" | cfssljson -bare tls-kubernetes
+  # master certs
+  auth::make_cert kubernetes kubernetes
+  auth::make_cert kube-controller-manager kube-controller-manager
+  auth::make_cert kube-scheduler kube-scheduler
+
+  # master kubeconfigs
+  auth::make_kubeconfig kube-controller-manager
+  auth::make_kubeconfig kube-scheduler
+
+  # service account cert
+  auth::make_cert service-account service-account
 
   cd - || exit
 }

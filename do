@@ -53,6 +53,12 @@ source "${DOT}/lib/addon.sh"
 
 start() {
   dumpstack "$*"
+
+  # run cluster-specific hook, accept errors
+  set +e
+  utils::function_exists hooks::pre_start && hooks::pre_start
+  set -e
+
   utils::function_exists "host::prepare" && host::prepare
 
   prepare
@@ -62,19 +68,41 @@ start() {
   # reload dynamic environment after orchestration
   load_env "${OUT_DIR}/env"
 
-  network::start
+  network::cycle
   cluster::configure
 
   export KUBECONFIG="${HOME}/.kube/${CLUSTER}"
   addon::sys
+
+  utils::wait_for_dns
+  _add_k8s_zone_to_dnsmasq
+  _mangle_resolvconf
+
+  # restart worker units so they pick up on DNS
+  orchestrate::workers
+
+  # run cluster-specific hook, accept errors
+  set +e
+  utils::function_exists hooks::post_start && hooks::post_start
+  set -e
 }
 
 stop() {
   dumpstack "$*"
-  utils::function_exists "host::stop" && host::stop
+
+  # run cluster-specific hook, accept errors
+  set +e
+  utils::function_exists hooks::pre_stop && hooks::pre_stop
+  set -e
 
   network::stop
   cluster::stop
+  _restore_resolvconf
+
+  # run cluster-specific hook, accept errors
+  set +e
+  utils::function_exists hooks::post_stop && hooks::post_stop
+  set -e
 }
 
 clean() {

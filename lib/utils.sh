@@ -83,6 +83,16 @@ utils::wait_for_net() {
   while ! ping -c1 www.google.com &>/dev/null; do sleep 1; done
 }
 
+utils::wait_for_dns() {
+  dumpstack
+  local dns_ip=$(utils::dns_ip)
+  echo -n "Waiting for Kube DNS."
+  while ! dig svc.k8s.local +timeout=1 @${dns_ip} >/dev/null 2>&1; do
+    echo -n "."
+  done
+  echo
+}
+
 utils::export_vm() {
   vm::assert_vm
 

@@ -9,7 +9,7 @@ fi
 
 DOT=$(cd -P "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
 TPL="${DOT}/templates"
-OUT_DIR="${PREFIX:-${HOME}}/kube/${CLUSTER}"
+OUT_DIR="${OUT_DIR:-"${HOME}/kube/${CLUSTER}"}"
 VM_HOST=$(hostname -s)
 CLUSTER_DOMAIN="k8s.local"
 LXD_DOMAIN="lxd.local"
@@ -48,6 +48,8 @@ source "$DOT/lib/provision.sh"
 source "${DOT}/lib/vm.sh"
 # shellcheck source=/dev/null
 source "${DOT}/lib/addon.sh"
+# shellcheck source=/dev/null
+source "${DOT}/lib/auth.sh"
 
 start() {
   dumpstack "$*"
@@ -115,7 +117,8 @@ clean() {
   stop
 
   # Clean prepare stage
-  rm -rf "${OUT_DIR:?}/bin/*"
+  rm -rf "${OUT_DIR:?}/bin"
+  rm -rf "${OUT_DIR:?}/.done"
 
   cluster::clean
   utils::function_exists "vm::clean" && vm::clean

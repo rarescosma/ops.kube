@@ -26,7 +26,7 @@ cluster::configure() {
   dumpstack "$*"
   load_env "${OUT_DIR}/env" "/kube/env"
   mkdir -p "${HOME}/.kube"
-  utils::template "${TPL}/auth/kubeconfig_admin" > "${HOME}/.kube/${CLUSTER}"
+  sed "s/127\.0\.0\.1/${MASTER0_IP}/g" ${OUT_DIR}/auth/admin.kubeconfig > "${HOME}/.kube/${CLUSTER}"
 }
 
 cluster::master() {

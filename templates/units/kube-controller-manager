@@ -5,11 +5,14 @@ Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 [Service]
 ExecStart=/kube/bin/kube-controller-manager \
   --cluster-name=kubernetes \
+  --cluster-signing-cert-file=/kube/auth/ca.pem \
+  --cluster-signing-key-file=/kube/auth/ca-key.pem \
+  --kubeconfig=/kube/auth/kube-controller-manager.kubeconfig \
   --leader-elect=true \
-  --master=http://${VM_IP}:8080 \
-  --root-ca-file=/kube/auth/tls-ca.pem \
-  --service-account-private-key-file=/kube/auth/tls-kubernetes-key.pem \
+  --root-ca-file=/kube/auth/ca.pem \
+  --service-account-private-key-file=/kube/auth/service-account-key.pem \
   --service-cluster-ip-range=${SERVICE_CIDR} \
+  --use-service-account-credentials=true \
   --v=2
 Restart=on-failure
 RestartSec=5

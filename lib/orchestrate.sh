@@ -21,6 +21,10 @@ orchestrate::master() {
   utils::replace_line_by_prefix "${OUT_DIR}/env" "KUBE_DNS_IP" "=\"${dns_ip}\""
 
   vm::exec "$vm" provision::master
+
+  # re-load env so master kubelet can talk to master api
+  load_env "${OUT_DIR}/env"
+
   vm::exec "$vm" provision::worker is_master
 }
 

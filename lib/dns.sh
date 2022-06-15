@@ -8,7 +8,7 @@ dns::wait_for_coredns() {
   dumpstack
   local dns_ip=$(dns::get_ip)
   echo -n "Waiting for CoreDNS"
-  while ! dig svc.k7s.local +timeout=1 @${dns_ip} >/dev/null 2>&1; do
+  while ! dig svc.${CLUSTER_DOMAIN} +timeout=1 @${dns_ip} >/dev/null 2>&1; do
     echo -n "."
   done
   echo

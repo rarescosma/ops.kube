@@ -11,6 +11,10 @@ network::pod_cidr() {
   echo "10.$(echo "$worker_ip" | cut -d. -f4).0.0/16"
 }
 
+network::lxd_cidr_prefix() {
+  echo $LXD_CIDR | cut -d"." -f1-3
+}
+
 network::gateway() {
   dumpstack "$*"
   ip route | grep default | cut -d" " -f3

@@ -19,6 +19,7 @@ LXD_BASE_IMG="kubuntu"
 LXD_IMG_FROM="ubuntu:22.04" # ubuntu 22.04 amd64
 LXD_PROFILE="kube-lxd-profile"
 LXD_BRIDGE="lxdbr0"
+LXD_CIDR="10.0.65.0"
 
 # =Provision
 SERVICE_CIDR="100.65.0.0/17"

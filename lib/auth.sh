@@ -9,6 +9,7 @@ auth::make_cert() {
   mkdir -p "$auth_dir"
 
   cd "$auth_dir" || exit
+  export LXD_CIDR_PREFIX=$(network::lxd_cidr_prefix)
   utils::template "${TPL}/auth/${role}-csr.json" > "${auth_dir}/${name}-csr.json"
 
   cfssl gencert \

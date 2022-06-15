@@ -35,6 +35,10 @@ vm::update_profile() {
     lxc profile create "$LXD_PROFILE"
   fi
 
+  local root_dev maj_min
+  read -r root_dev maj_min _x <<< $(_get_root_device)
+  export root_dev maj_min
+
   echo "Updating ${LXD_PROFILE}"
   utils::template "${TPL}/lxd_profile.yaml" | lxc profile edit "$LXD_PROFILE"
 }
@@ -89,4 +93,8 @@ vm::assert_vm() {
 vm::clean() {
   dumpstack "$*"
   lxc profile delete "$LXD_PROFILE" || true
+}
+
+_get_root_device() {
+  stat -c '%n %Hr:%Lr %F' $(df --output=source ${OUT_DIR} | tail -1)
 }

@@ -42,7 +42,7 @@ network::stop() {
 }
 
 _network::service_hops() {
-  for our_worker_ip in $(vm::discover worker ips; vm::discover master ips); do
+  for our_worker_ip in $(vm::discover master ips; vm::discover worker ips); do
     echo -n "nexthop via ${our_worker_ip} dev ${LXD_BRIDGE} weight 1 "
   done
 }

@@ -11,7 +11,7 @@ ExecStart=/kube/bin/etcd --name ${VM_HOST} \
   --initial-cluster-token etcd-cluster-0 \
   --initial-cluster master0-${CLUSTER}=http://${MASTER0_IP}:2380 \
   --initial-cluster-state new \
-  --data-dir=/var/lib/etcd
+  --data-dir=/var/lib/turtles/etcd-${VM_HOST}
 Restart=on-failure
 RestartSec=5
 

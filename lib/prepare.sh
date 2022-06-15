@@ -52,7 +52,7 @@ prepare::tls() {
   local auth_dir tpl_dir
   auth_dir="${OUT_DIR}/auth"
   tpl_dir="${TPL}/auth"
-  mkdir -p "$auth_dir"
+  mkdir -p "$auth_dir" "${OUT_DIR}/turtles"
 
   [ -f "$auth_dir/kubernetes.pem" ] && return
 

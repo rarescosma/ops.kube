@@ -50,6 +50,7 @@ data:
       health
       kubernetes ${CLUSTER_DOMAIN} ${SERVICE_CIDR} {
         pods insecure
+        endpoint_pod_names
         fallthrough in-addr.arpa ip6.arpa
       }
     }

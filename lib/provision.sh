@@ -35,15 +35,11 @@ provision::worker() {
   local auth_dir
   auth_dir="${OUT_DIR}/auth"
 
-  if ! test -f "$auth_dir/${VM_HOST}.pem"; then
-    auth::make_cert kubelet $VM_HOST
-    auth::make_kubeconfig ${VM_HOST} system:node:${VM_HOST} ${MASTER0_IP}
-  fi
+  test -f "$auth_dir/${VM_HOST}.pem" || auth::make_cert kubelet $VM_HOST
+  auth::make_kubeconfig ${VM_HOST} system:node:${VM_HOST} ${MASTER0_IP}
 
-  if ! test -f "$auth_dir/kube-proxy.pem"; then
-    auth::make_cert kube-proxy kube-proxy
-    auth::make_kubeconfig kube-proxy system:kube-proxy ${MASTER0_IP}
-  fi
+  test -f "$auth_dir/kube-proxy.pem" || auth::make_cert kube-proxy kube-proxy
+  auth::make_kubeconfig kube-proxy system:kube-proxy ${MASTER0_IP}
 
   utils::template "${TPL}/konfig/kubelet.yaml" > "/kube/konfig/${VM_HOST}.yaml"
   utils::template "${TPL}/konfig/kube-proxy.yaml" > "/kube/konfig/kube-proxy.yaml"

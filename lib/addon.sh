@@ -17,8 +17,6 @@ addon() {
 }
 
 addon::sys() {
-  addon registry
   addon kubelet-auth
-  addon_tpl coredns
-  addon_tpl ingress-nginx
+  addon coredns
 }

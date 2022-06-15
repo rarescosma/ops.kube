@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: coredns
-  namespace: sys
+  namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -36,13 +36,13 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: coredns
-  namespace: sys
+  namespace: kube-system
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: coredns
-  namespace: sys
+  namespace: kube-system
 data:
   Corefile: |
     svc.${CLUSTER_DOMAIN}:53 {
@@ -69,7 +69,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: coredns
-  namespace: sys
+  namespace: kube-system
   labels:
     k8s-app: coredns
     kubernetes.io/name: "CoreDNS"
@@ -133,7 +133,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: coredns
-  namespace: sys
+  namespace: kube-system
   labels:
     k8s-app: coredns
     kubernetes.io/cluster-service: "true"

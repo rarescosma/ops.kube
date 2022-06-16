@@ -6,7 +6,7 @@ V_ETCD="3.4.18"
 V_CNI="1.0.1"
 V_CONTAINERD="1.4.11"
 V_RUNC="1.0.2"
-V_KUBE="1.19.15"
+V_KUBE="1.23.7"
 
 # =Orchestrate
 #
@@ -23,4 +23,3 @@ LXD_CIDR="10.0.65.0"
 
 # =Provision
 SERVICE_CIDR="100.65.0.0/17"
-SECRET_TOKEN="ha1deUalsjkdalksdhaslkd"

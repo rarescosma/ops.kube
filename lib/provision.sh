@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MASTER_UNITS="etcd kube-apiserver kube-controller-manager kube-scheduler"
-WORKER_UNITS="containerd kubelet kube-proxy masquerade"
+WORKER_UNITS="${WORKER_UNITS:-"containerd kubelet kube-proxy masquerade"}"
 
 provision::master() {
   dumpstack "$*"

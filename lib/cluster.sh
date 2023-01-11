@@ -3,11 +3,11 @@
 cluster::stop() {
   dumpstack "$*"
   for mid in $(vm::discover master); do
-    vm::exec "${mid}" "halt" &
+    lxc stop -f "${mid}" || true
   done
 
   for wid in  $(vm::discover worker); do
-    vm::exec "${wid}" cluster::stop_worker &
+    lxc stop -f "${wid}" || true
   done
 
   wait

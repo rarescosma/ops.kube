@@ -33,7 +33,7 @@ auth::make_kubeconfig() {
 
   cd "$auth_dir" || exit
 
-  kubectl config set-cluster kubernetes \
+  kubectl config set-cluster $CLUSTER \
     --certificate-authority=ca.pem \
     --embed-certs=true \
     --server=https://${server}:6443 \
@@ -45,12 +45,12 @@ auth::make_kubeconfig() {
     --embed-certs=true \
     --kubeconfig=${unit}.kubeconfig
 
-  kubectl config set-context default \
-    --cluster=kubernetes \
+  kubectl config set-context $CLUSTER \
+    --cluster=$CLUSTER \
     --user=$user \
     --kubeconfig=${unit}.kubeconfig
 
-  kubectl config use-context default --kubeconfig=${unit}.kubeconfig
+  kubectl config use-context $CLUSTER --kubeconfig=${unit}.kubeconfig
 
   cd - || exit
 }

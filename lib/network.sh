@@ -17,6 +17,10 @@ network::lxd_cidr_prefix() {
 
 network::gateway() {
   dumpstack "$*"
+  if [ ! -z $NETWORK_GATEWAY ]; then
+    echo $NETWORK_GATEWAY
+    return
+  fi
   ip route | grep default | cut -d" " -f3
 }
 

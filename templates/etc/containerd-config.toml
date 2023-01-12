@@ -14,4 +14,6 @@ root = "/var/lib/turtles/containerd-${VM_HOST}"
   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."hub-cache.storage-system.svc.${CLUSTER_DOMAIN}"]
     endpoint = ["http://hub-cache.storage-system.svc.${CLUSTER_DOMAIN}"]
   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry-np.storage-system.svc.${CLUSTER_DOMAIN}"]
-    endpoint = ["http://registry-np.storage-system.svc.${CLUSTER_DOMAIN}"]
+    endpoint = ["https://registry-np.storage-system.svc.${CLUSTER_DOMAIN}"]
+  [plugins."io.containerd.grpc.v1.cri".registry.configs."registry-np.storage-system.svc.${CLUSTER_DOMAIN}".tls]
+    insecure_skip_verify = true

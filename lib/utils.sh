@@ -122,35 +122,83 @@ utils::function_exists() {
   [ -n "$(type -t "$1")" ] && [ "$(type -t "$1")" = function ]
 }
 
-utils::setup_lb() {
+utils::setup_haproxy_lb() {
+  dumpstack
+  local num_cpus=$1
+  shift
+
+  local cfg_file="/etc/haproxy/haproxy.cfg"
+  sudo mkdir -p $(dirname $cfg_file)
+
   (
     cat << __EOF__
-worker_processes auto;
-
-events {
-  worker_connections 768;
-  multi_accept on;
-}
-
-stream {
-  server {
-    listen 0.0.0.0:80;
-    proxy_pass workers;
-    proxy_protocol on;
-    proxy_protocol_timeout 2s;
-  }
-  upstream workers {
+global
+  log /dev/log	local0
+  log /dev/log	local1 notice
+  chroot /var/lib/haproxy
+  stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+  stats timeout 30s
+  stats bind-process ${num_cpus}
+  user haproxy
+  group haproxy
+  daemon
+  nbproc ${num_cpus}
 __EOF__
-    for worker_ip in $(vm::discover worker ips); do
-      echo "    server ${worker_ip}:10080 fail_timeout=2s;"
+    for cpu in $(seq 1 $num_cpus); do
+      echo "  cpu-map $cpu $((cpu - 1))"
     done
+    cat  << __EOF__
 
-    cat << __EOF__
-    random;
-  }
-}
+defaults
+  timeout connect 5s
+  timeout client 30s
+  timeout server 10s
+  maxconn 50000
+
+backend logger
+  stick-table type ip size 100k expire 3m store conn_rate(3s),gpc0,conn_cur
+
+frontend plain_proxy
+  bind *:80
+  mode tcp
+  tcp-request content accept if { src 10.0.0.0/8 }
+  tcp-request content reject if { src_conn_rate(logger) ge 20 }
+  tcp-request content reject if { src_conn_cur(logger) ge 100 }
+  tcp-request content track-sc1 src table logger
+  use_backend plain_nginx
+
+frontend ssl_proxy
+  bind *:443
+  mode tcp
+  tcp-request content accept if { src 10.0.0.0/8 }
+  tcp-request content reject if { src_conn_rate(logger) ge 20 }
+  tcp-request content reject if { src_conn_cur(logger) ge 100 }
+  tcp-request content track-sc1 src table logger
+  use_backend ssl_nginx
+
+backend plain_nginx
+  mode tcp
+  log global
 __EOF__
-  ) | sudo tee /etc/nginx/nginx.conf
+    local j=1
+    for worker_ip in $(vm::discover worker ips); do
+      echo "  server nginx${j} ${worker_ip}:10080 send-proxy check"
+      j=$((j+1))
+    done
+    cat  << __EOF__
+
+backend ssl_nginx
+  mode tcp
+  log global
+__EOF__
+    local j=1
+    for worker_ip in $(vm::discover worker ips); do
+      echo "  server nginx${j} ${worker_ip}:10443 send-proxy check"
+      j=$((j+1))
+    done
+  ) | sudo tee $cfg_file
+
+  haproxy -f $cfg_file -c && sudo systemctl reload haproxy
 }
 
 utils::wait_for_master() {

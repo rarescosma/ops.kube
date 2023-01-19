@@ -13,15 +13,6 @@ cluster::stop() {
   wait
 }
 
-cluster::stop_worker() {
-  dumpstack "$*"
-  vm::assert_vm
-
-  systemctl stop kubelet
-  systemctl stop containerd
-  halt
-}
-
 cluster::configure() {
   dumpstack "$*"
   load_env "${OUT_DIR}/env" "/kube/env"

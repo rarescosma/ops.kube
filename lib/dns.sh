@@ -28,7 +28,7 @@ __EOF__
 
 dns::restore_resolvconf() {
   sudo chattr -i /etc/resolv.conf
-  cat << __EOF__ | sudo tee /etc/resolv.conf
+  cat << __EOF__ | sudo tee /etc/resolv.conf >/dev/null
 nameserver ${DEFAULT_DNS}
 __EOF__
   sudo chattr +i /etc/resolv.conf

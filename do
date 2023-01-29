@@ -28,6 +28,11 @@ test -f "${OUT_DIR}/config" || test -f "/kube/config" || {
 }
 load_env "${OUT_DIR}/config" "/kube/config" "${OUT_DIR}/env" "/kube/env"
 
+command -v kubectl >/dev/null 2>&1 || {
+  echo "Could not call kubectl. Check your PATH." >&2
+  exit 1
+}
+
 # shellcheck source=/dev/null
 source "$DOT/lib/cluster.sh"
 # shellcheck source=/dev/null

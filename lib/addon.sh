@@ -8,6 +8,7 @@ addon() {
     if test -f "$TPL/addons/${addon}.yaml.tpl"; then
       export KUBE_DNS_IP="$(dns::get_ip)"
       export ASSCAPED_LXD_DOMAIN="${LXD_DOMAIN/\./\\.}"
+      mkdir -p "$OUT_DIR/.manifests"
       utils::template "$TPL/addons/${addon}.yaml.tpl" \
         | tee "$OUT_DIR/.manifests/${addon}.yaml"
     else

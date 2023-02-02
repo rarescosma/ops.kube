@@ -55,7 +55,7 @@ vm::create_base_image() {
   vm::exec "$vm" provision::base
 
   lxc stop "$vm";
-  lxc publish "$vm" --alias "$image"
+  lxc publish --compression none "$vm" --alias "$image"
   lxc delete "$vm" --force
 }
 

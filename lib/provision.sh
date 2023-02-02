@@ -77,7 +77,7 @@ provision::base() {
     apt -y full-upgrade
     apt -y install \
       curl wget iptables software-properties-common ncdu htop \
-      socat conntrack net-tools golang-cfssl
+      socat conntrack net-tools golang-cfssl gettext-base
   fi
 
   # Profile / aliases / etc.

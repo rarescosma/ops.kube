@@ -209,3 +209,11 @@ utils::wait_for_master() {
   done
   kubectl wait --for=condition=Ready node/master0-${CLUSTER}
 }
+
+utils::ensure_kubectl() {
+  if ! command -v kubectl >/dev/null; then
+    mkdir -p "${HOME}"/bin
+    utils::download "https://storage.googleapis.com/kubernetes-release/release/v${V_KUBE}/bin/linux/amd64/kubectl" "${HOME}/bin/kubectl"
+    chmod +x "${HOME}/bin/kubectl"
+  fi
+}

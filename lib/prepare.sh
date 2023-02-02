@@ -15,7 +15,6 @@ declare -a _BINS=(
   "https://storage.googleapis.com/kubernetes-release/release/v${V_KUBE}/bin/linux/amd64/kube-scheduler"
   "https://storage.googleapis.com/kubernetes-release/release/v${V_KUBE}/bin/linux/amd64/kubectl"
   "https://storage.googleapis.com/kubernetes-release/release/v${V_KUBE}/bin/linux/amd64/kubelet"
-
 )
 
 prepare() {

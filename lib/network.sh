@@ -42,7 +42,7 @@ network::start() {
 network::stop() {
   dumpstack "$*"
 
-  ip route | grep -E "lxdbr0\s?$" \
+  ip route | grep -E "${LXD_BRIDGE}\s?$" \
   | cut -d" " -f1 \
   | xargs -I{} sudo ip route del {};
 

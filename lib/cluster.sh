@@ -20,12 +20,6 @@ cluster::configure() {
   sed "s/127\.0\.0\.1/${MASTER0_IP}/g" ${OUT_DIR}/auth/admin.kubeconfig > "${HOME}/.kube/${CLUSTER}"
 }
 
-cluster::master() {
-  # shellcheck source=/dev/null
-  source "${DOT}/${CLUSTER}-cluster.sh"
-  echo "http://${MASTER0_IP}:8080"
-}
-
 cluster::clean() {
   dumpstack "$*"
   vm::destroy "$(vm::discover master)"

@@ -306,8 +306,7 @@
       "C": "US",
       "L": "Portland",
       "O": "system:nodes",
-      "OU": "Kubernetes The Better Way",
-      "ST": "Oregon"
+      "OU": "Kubernetes the harder way"
     }
   ]
 }

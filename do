@@ -16,6 +16,11 @@ LXD_DOMAIN="lxd.local"
 if [ -z "$DEFAULT_DNS" ]; then
   DEFAULT_DNS="1.1.1.1"
 fi
+if command -v kubectl >/dev/null 2>&1; then
+  KUBECTL=kubectl
+else
+  KUBECTL="${OUT_DIR}/bin/kubectl"
+fi
 
 export DOT TPL OUT_DIR VM_HOST CLUSTER_DOMAIN LXD_DOMAIN DEFAULT_DNS
 

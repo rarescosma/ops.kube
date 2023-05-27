@@ -60,7 +60,6 @@ vm::create_base_image() {
 }
 
 vm::discover() {
-  dumpstack "$*"
   local tag what nodes
   tag="${1}[0-9]+-${CLUSTER}"
   what=${2:-"ids"}

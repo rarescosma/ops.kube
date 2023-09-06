@@ -99,7 +99,7 @@ spec:
           effect: "NoSchedule"
       containers:
       - name: coredns
-        image: coredns/coredns:1.7.1
+        image: coredns/coredns:1.10.1
         imagePullPolicy: IfNotPresent
         args: [ "-conf", "/etc/coredns/Corefile" ]
         volumeMounts:

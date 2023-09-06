@@ -59,6 +59,11 @@ source "${DOT}/lib/auth.sh"
 start() {
   dumpstack "$*"
 
+  if ! command -v dig >/dev/null 2>&1; then
+    echo "Missing utility 'dig'. Aborting!" >&2
+    exit 1
+  fi
+
   # run cluster-specific hook, accept errors
   set +e
   utils::function_exists hooks::pre_start && hooks::pre_start

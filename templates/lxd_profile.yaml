@@ -4,7 +4,6 @@ config:
     lxc.apparmor.profile=unconfined
     lxc.cap.drop=
     lxc.autodev=1
-    lxc.cgroup.devices.allow=b ${maj_min} ro
     lxc.mount.auto=proc:rw sys:ro
   security.nesting: "true"
   security.privileged: "true"

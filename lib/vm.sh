@@ -35,9 +35,9 @@ vm::update_profile() {
     lxc profile create "$LXD_PROFILE"
   fi
 
-  local root_dev maj_min
-  read -r root_dev maj_min _x <<< $(_get_root_device)
-  export root_dev maj_min
+  local root_dev
+  read -r root_dev _x <<< $(_get_root_device)
+  export root_dev
 
   echo "Updating ${LXD_PROFILE}"
   utils::template "${TPL}/lxd_profile.yaml" | lxc profile edit "$LXD_PROFILE"

@@ -85,7 +85,7 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       k8s-app: coredns

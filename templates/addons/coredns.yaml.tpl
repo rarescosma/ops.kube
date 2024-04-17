@@ -69,6 +69,10 @@ data:
       forward . ${DNSMASQ_IP}
     }
     .:53 {
+      hosts {
+          172.16.16.16 ufo.getbetter.ro
+          fallthrough
+      }
       forward . 8.8.8.8
     }
 ---

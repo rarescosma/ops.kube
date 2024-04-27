@@ -2,11 +2,11 @@
 #
 # During the "prepare" stage we pull essential kubernetes, etcd and docker
 # binaries as well as generate TLS certificates for the cluster.
-V_ETCD="3.4.18"
-V_CNI="1.0.1"
-V_CONTAINERD="1.4.11"
-V_RUNC="1.0.2"
-V_KUBE="1.23.7"
+V_KUBE="1.30.0"
+V_ETCD="3.5.11"
+V_CNI="1.4.1"
+V_CONTAINERD="1.7.15"
+V_RUNC="1.1.12"
 
 # =Orchestrate
 #
@@ -15,11 +15,11 @@ V_KUBE="1.23.7"
 VM_IFACE="eth0"
 VM_NUM_WORKERS=2
 
-LXD_BASE_IMG="kubuntu"
-LXD_IMG_FROM="ubuntu:22.04" # ubuntu 22.04 amd64
+LXD_BASE_IMG="kotato"
+LXD_IMG_FROM="images:debian/bullseye" # Debian Bullseye
 LXD_PROFILE="kube-lxd-profile"
 LXD_BRIDGE="lxdbr0"
-LXD_CIDR="10.0.65.0"
+LXD_CIDR="10.65.0.0"
 
 # =Provision
 SERVICE_CIDR="100.65.0.0/17"
